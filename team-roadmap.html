@@ -438,7 +438,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
     <div class="who-section">
       <span class="who-label">From:</span>
       <button class="who-btn active" data-who="all" onclick="setWho(this)">Everyone</button>
-      <button class="who-btn" data-who="you" onclick="setWho(this)">Yuna (Manager, CIT)</button>
+      <button class="who-btn" data-who="you" onclick="setWho(this)">Yuna</button>
       <button class="who-btn" data-who="ba" onclick="setWho(this)">Jiarui</button>
       <button class="who-btn" data-who="crm" onclick="setWho(this)">Ben Holser</button>
       <button class="who-btn" data-who="jm" onclick="setWho(this)">Jingmin</button>
@@ -1091,8 +1091,26 @@ function renderHolistic() {
 
 // ── RENDER IMPACT ──
 // ── RATE MANAGER (manager-only) ──
+const MANAGER_PASSWORD = '2148';
+let managerUnlocked = sessionStorage.getItem('manager_unlocked') === 'true';
+
 function toggleRatePanel() {
-  document.getElementById('rate-panel').classList.toggle('visible');
+  const panel = document.getElementById('rate-panel');
+  if (panel.classList.contains('visible')) {
+    panel.classList.remove('visible');
+    return;
+  }
+  if (!managerUnlocked) {
+    const pw = prompt('Enter manager password to access rate settings:');
+    if (pw === null) return;
+    if (pw !== MANAGER_PASSWORD) {
+      showToast('Incorrect password');
+      return;
+    }
+    managerUnlocked = true;
+    sessionStorage.setItem('manager_unlocked', 'true');
+  }
+  panel.classList.add('visible');
   renderRateCategories();
 }
 
