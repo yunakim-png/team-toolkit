@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Team Roadmap Builder</title>
+<title>Customer Intelligence & Technology Team Roadmap</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -20,14 +20,17 @@
   --badge-all:#EDEAF8;--badge-all-t:#3C3489;
   --badge-ba:#E6F5EF;--badge-ba-t:#0F6E56;
   --badge-crm:#E6F1FB;--badge-crm-t:#0C447C;
+  --badge-jm:#FDF3E0;--badge-jm-t:#7A4800;
   --badge-you:#FAEAE7;--badge-you-t:#7A2215;
   --badge-cx:#FBE9F3;--badge-cx-t:#7A2252;
-  --badge-ops:#FDF3E0;--badge-ops-t:#7A4800;
-  --badge-data:#E8F5E2;--badge-data-t:#2A5C10;
-  --badge-tech:#E6F1FB;--badge-tech-t:#0C447C;
+  --badge-ap:#FDF3E0;--badge-ap-t:#7A4800;
+  --badge-ps:#E8F5E2;--badge-ps-t:#2A5C10;
+  --badge-logistics:#EDEAF8;--badge-logistics-t:#3C3489;
+  --badge-fc:#E6F1FB;--badge-fc-t:#0C447C;
   --badge-other:#F1EFE8;--badge-other-t:#4A4840;
   --status-planned-bg:#F1EFE8;--status-planned-t:#4A4840;
   --status-progress-bg:#FDF3E0;--status-progress-t:#7A4800;
+  --status-blocked-bg:#FAEAE7;--status-blocked-t:#7A2215;
   --status-done-bg:#E6F5EF;--status-done-t:#0F6E56;
   --radius-sm:6px;--radius-md:10px;--radius-lg:14px;
   --shadow:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
@@ -82,6 +85,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
 .who-btn[data-who="you"].active{background:var(--badge-you);color:var(--badge-you-t);border-color:transparent;font-weight:500}
 .who-btn[data-who="ba"].active{background:var(--badge-ba);color:var(--badge-ba-t);border-color:transparent;font-weight:500}
 .who-btn[data-who="crm"].active{background:var(--badge-crm);color:var(--badge-crm-t);border-color:transparent;font-weight:500}
+.who-btn[data-who="jm"].active{background:var(--badge-jm);color:var(--badge-jm-t);border-color:transparent;font-weight:500}
 
 /* KANBAN */
 .columns{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:1.5rem}
@@ -113,11 +117,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
 .badge-who-all{background:var(--badge-all);color:var(--badge-all-t)}
 .badge-who-ba{background:var(--badge-ba);color:var(--badge-ba-t)}
 .badge-who-crm{background:var(--badge-crm);color:var(--badge-crm-t)}
+.badge-who-jm{background:var(--badge-jm);color:var(--badge-jm-t)}
 .badge-who-you{background:var(--badge-you);color:var(--badge-you-t)}
 .badge-topic-cx{background:var(--badge-cx);color:var(--badge-cx-t)}
-.badge-topic-ops{background:var(--badge-ops);color:var(--badge-ops-t)}
-.badge-topic-data{background:var(--badge-data);color:var(--badge-data-t)}
-.badge-topic-tech{background:var(--badge-tech);color:var(--badge-tech-t)}
+.badge-topic-ap{background:var(--badge-ap);color:var(--badge-ap-t)}
+.badge-topic-ps{background:var(--badge-ps);color:var(--badge-ps-t)}
+.badge-topic-logistics{background:var(--badge-logistics);color:var(--badge-logistics-t)}
+.badge-topic-fc{background:var(--badge-fc);color:var(--badge-fc-t)}
 .badge-topic-other{background:var(--badge-other);color:var(--badge-other-t)}
 
 /* BOTTOM BAR */
@@ -156,6 +162,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
 .t-card:active{cursor:grabbing;opacity:.75}
 .t-card.dragging{box-shadow:var(--shadow-lg);opacity:.85;transform:rotate(1deg) scale(1.02)}
 .t-card.status-done{border-color:#1A7A5E;background:#F4FCF8}
+.t-card.status-blocked{border-color:#B03020;background:#FCF5F4}
 .t-card-top{display:flex;align-items:flex-start;gap:6px}
 .t-card-text{font-size:12px;line-height:1.45;flex:1;color:var(--text-primary)}
 .t-card.status-done .t-card-text{color:#0F6E56}
@@ -169,6 +176,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
 .status-btn:hover{background:var(--surface-hover)}
 .status-btn.active-planned{background:var(--status-planned-bg);color:var(--status-planned-t);font-weight:500}
 .status-btn.active-progress{background:var(--status-progress-bg);color:var(--status-progress-t);font-weight:500}
+.status-btn.active-blocked{background:var(--status-blocked-bg);color:var(--status-blocked-t);font-weight:500}
 .status-btn.active-done{background:var(--status-done-bg);color:var(--status-done-t);font-weight:500}
 
 /* HOLISTIC TAB */
@@ -189,9 +197,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
 .mtx td.row-cat{font-size:11px;color:var(--text-secondary);padding:8px 10px;white-space:nowrap;border-right:1px solid var(--border-strong);border-bottom:0.5px solid var(--border);background:var(--surface-hover);font-weight:500;vertical-align:middle;width:68px}
 .m-chip{font-size:10px;padding:3px 6px;border-radius:3px;line-height:1.3;display:block;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .m-chip-cx{background:var(--badge-cx);color:var(--badge-cx-t)}
-.m-chip-ops{background:var(--badge-ops);color:var(--badge-ops-t)}
-.m-chip-tech{background:var(--badge-tech);color:var(--badge-tech-t)}
-.m-chip-data{background:var(--badge-data);color:var(--badge-data-t)}
+.m-chip-ap{background:var(--badge-ap);color:var(--badge-ap-t)}
+.m-chip-fc{background:var(--badge-fc);color:var(--badge-fc-t)}
+.m-chip-ps{background:var(--badge-ps);color:var(--badge-ps-t)}
+.m-chip-logistics{background:var(--badge-logistics);color:var(--badge-logistics-t)}
 .m-chip-other{background:var(--badge-other);color:var(--badge-other-t)}
 .m-chip.done{opacity:.5;text-decoration:line-through}
 .m-dot{display:block;width:6px;height:6px;border-radius:50%;background:var(--border-strong);margin:6px auto 2px}
@@ -285,6 +294,24 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
 .dm-tag button{background:none;border:none;cursor:pointer;color:inherit;font-size:11px;padding:0;line-height:1;opacity:.7}
 .dm-tag button:hover{opacity:1}
 .dm-tag-input{border:none;outline:none;background:none;font-size:12px;flex:1;min-width:80px;color:var(--text-primary)}
+.dm-select{width:100%;font-family:'DM Sans',sans-serif;font-size:13px;padding:9px 12px;border:1px solid var(--border-strong);border-radius:var(--radius-md);background:var(--bg);color:var(--text-primary);outline:none;cursor:pointer}
+.dm-select:focus{border-color:#1A1916}
+.dm-owner-history{font-size:11px;color:var(--text-muted);font-style:italic;margin-top:6px}
+.dm-team-add{border:none;outline:none;background:none;font-size:12px;flex:1;min-width:100px;color:var(--text-muted);cursor:pointer}
+.dm-new-team-input{flex:1;font-family:'DM Sans',sans-serif;font-size:12px;padding:7px 10px;border:1px solid var(--border-strong);border-radius:var(--radius-md);background:var(--bg);color:var(--text-primary);outline:none}
+.dm-new-team-input:focus{border-color:#1A1916}
+.dm-deliv-list{border:1px solid var(--border-strong);border-radius:var(--radius-md);background:var(--bg);margin-bottom:8px;overflow:hidden}
+.dm-deliv-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid var(--border)}
+.dm-deliv-row:last-child{border-bottom:none}
+.dm-deliv-check{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border-strong);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;background:var(--surface)}
+.dm-deliv-check.checked{background:#1A7A5E;border-color:#1A7A5E;color:#fff;font-size:10px}
+.dm-deliv-text{font-size:13px;flex:1;color:var(--text-primary);cursor:text}
+.dm-deliv-text.checked{text-decoration:line-through;color:var(--text-muted)}
+.dm-deliv-del{background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:13px;flex-shrink:0}
+.dm-deliv-del:hover{color:var(--col-drop)}
+.dm-deliv-empty{padding:14px 10px;font-size:12px;color:var(--text-muted);font-style:italic;text-align:center}
+.dm-deliv-input{width:100%;font-family:'DM Sans',sans-serif;font-size:13px;padding:9px 12px;border:1px solid var(--border-strong);border-radius:var(--radius-md);background:var(--bg);color:var(--text-primary);outline:none}
+.dm-deliv-input:focus{border-color:#1A1916}
 .dm-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--border)}
 
 /* ── IMPACT — STAKEHOLDER ROWS ── */
@@ -359,7 +386,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
 
 <!-- TAB BAR -->
 <div class="tab-bar">
-  <div class="tab-brand">Team roadmap <span>builder</span></div>
+  <div class="tab-brand">Customer Intelligence & Technology <span>roadmap</span></div>
   <button class="tab-btn active" id="tab-build" onclick="switchTab('build')">
     Building session
     <span class="tab-badge" id="tb-count">0 items</span>
@@ -381,7 +408,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
 <div class="page active" id="page-build">
   <div class="page-header">
     <div>
-      <div class="page-eyebrow">First team meeting</div>
+      <div class="page-eyebrow">Customer Intelligence & Technology</div>
       <div class="page-headline">Let's build our roadmap</div>
       <div class="page-sub">Add initiatives → sort into buckets → schedule on the fiscal year</div>
     </div>
@@ -401,8 +428,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
       <select id="topic-sel">
         <option value="cx">CX</option>
         <option value="ap">AP</option>
-        <option value="logistics">Logistics</option>
         <option value="ps">PS</option>
+        <option value="logistics">Logistics</option>
+        <option value="fc">FC</option>
         <option value="other">Other</option>
       </select>
       <button class="btn-add" onclick="addItem()">+ Add</button>
@@ -410,9 +438,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
     <div class="who-section">
       <span class="who-label">From:</span>
       <button class="who-btn active" data-who="all" onclick="setWho(this)">Everyone</button>
-      <button class="who-btn" data-who="you" onclick="setWho(this)">Yuna</button>
+      <button class="who-btn" data-who="you" onclick="setWho(this)">Yuna (Manager, CIT)</button>
       <button class="who-btn" data-who="ba" onclick="setWho(this)">Jiarui</button>
       <button class="who-btn" data-who="crm" onclick="setWho(this)">Ben Holser</button>
+      <button class="who-btn" data-who="jm" onclick="setWho(this)">Jingmin</button>
     </div>
   </div>
 
@@ -531,9 +560,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
 
   <div class="legend" id="hol-legend">
     <div class="legend-item"><div class="legend-dot" style="background:#FBE9F3;border:1px solid #D4537E"></div>CX</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#FDF3E0;border:1px solid #BA7517"></div>Ops</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#E8F5E2;border:1px solid #639922"></div>Data</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#E6F1FB;border:1px solid #378ADD"></div>Tech</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#FDF3E0;border:1px solid #BA7517"></div>AP</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#E8F5E2;border:1px solid #639922"></div>PS</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#EEEDFE;border:1px solid #7F77DD"></div>Logistics</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#E6F1FB;border:1px solid #378ADD"></div>FC</div>
     <div class="legend-item"><div class="legend-dot" style="background:#F1EFE8;border:1px solid #888780"></div>Other</div>
     <div class="legend-item" style="margin-left:8px;padding-left:12px;border-left:1px solid var(--border)"><div class="legend-dot" style="background:#E6F5EF;border:1px solid #1A7A5E"></div>Done (strikethrough)</div>
     <div style="margin-left:auto;font-size:11px;color:var(--text-muted)">Scroll → to see all 12 months</div>
@@ -628,7 +658,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
       <div>
         <div class="dm-title" id="dm-title">Initiative name</div>
         <div class="dm-meta">
-          <span><i></i>Added <span id="dm-added">—</span></span>
+          <span>Added <span id="dm-added">—</span></span>
           <span>Updated <span id="dm-updated">—</span></span>
         </div>
       </div>
@@ -636,15 +666,43 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
     </div>
 
     <div class="dm-section">
-      <label class="dm-label">Description / deliverables</label>
-      <textarea class="dm-textarea" id="dm-description" placeholder="What does done look like for this initiative?" onchange="saveDetailModal()"></textarea>
+      <label class="dm-label">Owner</label>
+      <select class="dm-select" id="dm-owner" onchange="changeOwnerFromModal()">
+        <option value="ba">Jiarui</option>
+        <option value="crm">Ben Holser</option>
+        <option value="jm">Jingmin</option>
+        <option value="you">Yuna (Manager, CIT)</option>
+      </select>
+      <div class="dm-owner-history" id="dm-owner-history"></div>
     </div>
 
     <div class="dm-section">
-      <label class="dm-label">Other teams affected</label>
+      <label class="dm-label">Status</label>
+      <select class="dm-select" id="dm-status" onchange="changeStatusFromModal()">
+        <option value="planned">Planned</option>
+        <option value="progress">In progress</option>
+        <option value="blocked">Blocked</option>
+        <option value="done">Done</option>
+      </select>
+    </div>
+
+    <div class="dm-section">
+      <label class="dm-label">Teams affected <span style="text-transform:none;font-weight:400;color:var(--text-muted)">(select all that apply)</span></label>
       <div class="dm-tags-input" id="dm-tags-wrap">
-        <input type="text" class="dm-tag-input" id="dm-tag-input" placeholder="Type a team and press Enter..." onkeydown="handleTagInput(event)" />
+        <select class="dm-team-add" id="dm-team-add" onchange="addTeamFromSelect()">
+          <option value="">+ Add team...</option>
+        </select>
       </div>
+      <div style="display:flex;gap:6px;margin-top:6px">
+        <input type="text" class="dm-new-team-input" id="dm-new-team-input" placeholder="Or create a new team..." onkeydown="if(event.key==='Enter')createNewTeam()" />
+        <button class="btn-close" style="padding:6px 12px;font-size:11px" onclick="createNewTeam()">Add</button>
+      </div>
+    </div>
+
+    <div class="dm-section">
+      <label class="dm-label">Description / deliverables</label>
+      <div class="dm-deliv-list" id="dm-deliv-list"></div>
+      <input type="text" class="dm-deliv-input" id="dm-deliv-input" placeholder="Add a deliverable and press Enter..." onkeydown="handleDelivInput(event)" />
     </div>
 
     <div class="dm-section">
@@ -721,7 +779,7 @@ async function dbLoad() {
 }
 
 function getState() {
-  return { items, tItems, status, impact, details, rateCategories };
+  return { items, tItems, status, impact, details, rateCategories, availableTeams };
 }
 
 function applyState(state) {
@@ -732,6 +790,7 @@ function applyState(state) {
   impact = state.impact || {};
   details = state.details || {};
   rateCategories = state.rateCategories || rateCategories;
+  availableTeams = state.availableTeams || availableTeams;
 }
 
 function showSaveStatus(s) {
@@ -753,19 +812,20 @@ function triggerSave() {
 // ── STATE ──
 let items  = [];   // {id, text, topic, who, col}
 let tItems = {};   // id → 'pool'|'q1'|'q2'|'q3'|'q4'
-let status = {};   // id → 'planned'|'progress'|'done'
+let status = {};   // id → 'planned'|'progress'|'blocked'|'done'
 let impact = {};   // id → {stakeholders:[{name,before,after,rateId,freq}], notes}
-let details = {};  // id → {description, tags:[], notes, addedAt, updatedAt}
+let details = {};  // id → {deliverables:[{text,done}], tags:[], notes, addedAt, updatedAt}
 let rateCategories = [
   { id:'r1', name:'Agent / frontline', rate:30 },
   { id:'r2', name:'Analyst', rate:45 },
   { id:'r3', name:'My team', rate:50 },
 ];
+let availableTeams = ['CX','Ops','Sales','Finance','Leadership','Data','Tech'];
 let dragId = null, dragSrc = null, currentWho = 'all';
 let activeDetailId = null;
 
-const whoLabels   = {all:'Everyone', ba:'Senior BA', crm:'CRM specialist', you:'You'};
-const topicLabels = {cx:'CX', ops:'Ops', data:'Data', tech:'Tech', other:'Other'};
+const whoLabels   = {all:'Everyone', ba:'Jiarui', crm:'Ben Holser', jm:'Jingmin', you:'Yuna (Manager, CIT)'};
+const topicLabels = {cx:'CX', ap:'AP', ps:'PS', logistics:'Logistics', fc:'FC', other:'Other'};
 const colLabels   = {now:'Keep & prioritise', later:'Backlog', rethink:'Rethink', drop:'Abandon'};
 const qLabels     = {q1:'Q1 (Apr–Jun)', q2:'Q2 (Jul–Sep)', q3:'Q3 (Oct–Dec)', q4:'Q4 (Jan–Mar)'};
 const MONTHS      = [
@@ -774,7 +834,7 @@ const MONTHS      = [
   {key:'oct',label:'Oct',q:'q3'},{key:'nov',label:'Nov',q:'q3'},{key:'dec',label:'Dec',q:'q3'},
   {key:'jan',label:'Jan',q:'q4'},{key:'feb',label:'Feb',q:'q4'},{key:'mar',label:'Mar',q:'q4'},
 ];
-const TOPICS = ['cx','ops','data','tech','other'];
+const TOPICS = ['cx','ap','ps','logistics','fc','other'];
 const Q_LABELS = {q1:'Q1 — Apr · May · Jun',q2:'Q2 — Jul · Aug · Sep',q3:'Q3 — Oct · Nov · Dec',q4:'Q4 — Jan · Feb · Mar'};
 
 // ── TAB ──
@@ -805,7 +865,7 @@ function addItem() {
   items.push({id, text, topic, who: currentWho, col:'now'});
   tItems[id] = 'pool';
   status[id] = 'planned';
-  details[id] = { description:'', tags:[], notes:'', addedAt: now, updatedAt: now };
+  details[id] = { deliverables:[], tags:[], notes:'', addedAt: now, updatedAt: now };
   inp.value=''; inp.focus();
   render();
   triggerSave();
@@ -871,7 +931,7 @@ function makeCard(item) {
   d.addEventListener('dragstart',e=>kDragStart(e,item.id));
   d.addEventListener('dragend',()=>kDragEnd(item.id));
   d.addEventListener('click',e=>{ if(e.target.closest('.card-del')) return; openDetailModal(item.id); });
-  const hasDetail = details[item.id] && (details[item.id].description || (details[item.id].tags&&details[item.id].tags.length));
+  const hasDetail = details[item.id] && ((details[item.id].deliverables&&details[item.id].deliverables.length) || (details[item.id].tags&&details[item.id].tags.length));
   d.innerHTML=`<div class="card-top"><span class="card-text">${esc(item.text)}</span><button class="card-del" onclick="delItem('${item.id}')" title="Remove">✕</button></div><div class="card-meta"><span class="badge badge-who-${item.who}">${whoLabels[item.who]}</span><span class="badge badge-topic-${item.topic}">${topicLabels[item.topic]}</span></div>${hasDetail?'<div class="card-expand-hint">Has details — click to view</div>':'<div class="card-expand-hint">Click to add details</div>'}`;
   return d;
 }
@@ -897,6 +957,7 @@ function makeTCard(item) {
       <div class="status-toggle">
         <button class="status-btn ${st==='planned'?'active-planned':''}" onclick="cycleStatus('${item.id}','planned')">Planned</button>
         <button class="status-btn ${st==='progress'?'active-progress':''}" onclick="cycleStatus('${item.id}','progress')">In progress</button>
+        <button class="status-btn ${st==='blocked'?'active-blocked':''}" onclick="cycleStatus('${item.id}','blocked')">Blocked</button>
         <button class="status-btn ${st==='done'?'active-done':''}" onclick="cycleStatus('${item.id}','done')">Done ✓</button>
       </div>
     </div>`;
@@ -1259,16 +1320,45 @@ function openDetailModal(id) {
   activeDetailId = id;
   const item = items.find(i=>i.id===id);
   if (!item) return;
-  if (!details[id]) details[id] = { description:'', tags:[], notes:'', addedAt:new Date().toISOString(), updatedAt:new Date().toISOString() };
+  if (!details[id]) details[id] = { deliverables:[], tags:[], notes:'', addedAt:new Date().toISOString(), updatedAt:new Date().toISOString() };
   const d = details[id];
+  if (!status[id]) status[id] = 'planned';
+  if (!d.ownerHistory) d.ownerHistory = [];
 
   document.getElementById('dm-title').textContent = item.text;
   document.getElementById('dm-added').textContent = formatDate(d.addedAt);
   document.getElementById('dm-updated').textContent = formatDate(d.updatedAt);
-  document.getElementById('dm-description').value = d.description||'';
+  document.getElementById('dm-owner').value = item.who;
+  document.getElementById('dm-status').value = status[id];
   document.getElementById('dm-notes').value = d.notes||'';
-  renderTags();
+  renderOwnerHistory();
+  renderTeamDropdown();
+  renderTeamChips();
+  renderDeliverables();
   document.getElementById('detail-modal').classList.add('open');
+}
+
+function renderOwnerHistory() {
+  const el = document.getElementById('dm-owner-history');
+  const hist = details[activeDetailId]?.ownerHistory || [];
+  if (!hist.length) { el.textContent = ''; return; }
+  const last = hist[hist.length-1];
+  el.textContent = `Reassigned from ${whoLabels[last.from]} on ${formatDate(last.at)}`;
+}
+
+function changeOwnerFromModal() {
+  if (!activeDetailId) return;
+  const item = items.find(i=>i.id===activeDetailId);
+  if (!item) return;
+  const newWho = document.getElementById('dm-owner').value;
+  if (newWho === item.who) return;
+  const d = details[activeDetailId];
+  if (!d.ownerHistory) d.ownerHistory = [];
+  d.ownerHistory.push({ from: item.who, to: newWho, at: new Date().toISOString() });
+  item.who = newWho;
+  renderOwnerHistory();
+  saveDetailModal();
+  showToast(`Reassigned to ${whoLabels[newWho]}`);
 }
 
 function formatDate(iso) {
@@ -1277,43 +1367,115 @@ function formatDate(iso) {
   return date.toLocaleDateString('en-US', { month:'short', day:'numeric' });
 }
 
-function renderTags() {
+// ── STATUS DROPDOWN IN MODAL ──
+function changeStatusFromModal() {
+  if (!activeDetailId) return;
+  const val = document.getElementById('dm-status').value;
+  status[activeDetailId] = val;
+  if (val==='done' && !impact[activeDetailId]) impact[activeDetailId] = { stakeholders:[], notes:'' };
+  triggerSave();
+  updateTabBadges();
+}
+
+// ── TEAMS MULTISELECT ──
+function renderTeamDropdown() {
+  const sel = document.getElementById('dm-team-add');
+  const current = details[activeDetailId]?.tags || [];
+  sel.innerHTML = '<option value="">+ Add team...</option>' +
+    availableTeams.filter(t=>!current.includes(t)).map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join('');
+}
+
+function addTeamFromSelect() {
+  const sel = document.getElementById('dm-team-add');
+  const val = sel.value;
+  if (!val) return;
+  if (!details[activeDetailId].tags) details[activeDetailId].tags = [];
+  if (!details[activeDetailId].tags.includes(val)) details[activeDetailId].tags.push(val);
+  sel.value = '';
+  renderTeamDropdown();
+  renderTeamChips();
+  saveDetailModal();
+}
+
+function createNewTeam() {
+  const input = document.getElementById('dm-new-team-input');
+  const val = input.value.trim();
+  if (!val) return;
+  if (!availableTeams.includes(val)) availableTeams.push(val);
+  if (!details[activeDetailId].tags) details[activeDetailId].tags = [];
+  if (!details[activeDetailId].tags.includes(val)) details[activeDetailId].tags.push(val);
+  input.value = '';
+  renderTeamDropdown();
+  renderTeamChips();
+  saveDetailModal();
+}
+
+function renderTeamChips() {
   const wrap = document.getElementById('dm-tags-wrap');
-  const input = document.getElementById('dm-tag-input');
+  const select = document.getElementById('dm-team-add');
   wrap.querySelectorAll('.dm-tag').forEach(t=>t.remove());
   const tags = details[activeDetailId]?.tags || [];
   tags.forEach((tag,idx) => {
     const span = document.createElement('span');
     span.className = 'dm-tag';
-    span.innerHTML = `${esc(tag)} <button onclick="removeTag(${idx})">✕</button>`;
-    wrap.insertBefore(span, input);
+    span.innerHTML = `${esc(tag)} <button onclick="removeTeamTag(${idx})">✕</button>`;
+    wrap.insertBefore(span, select);
   });
 }
 
-function handleTagInput(e) {
+function removeTeamTag(idx) {
+  details[activeDetailId].tags.splice(idx,1);
+  renderTeamDropdown();
+  renderTeamChips();
+  saveDetailModal();
+}
+
+// ── DELIVERABLES CHECKLIST ──
+function renderDeliverables() {
+  const list = document.getElementById('dm-deliv-list');
+  const items_ = details[activeDetailId]?.deliverables || [];
+  if (items_.length === 0) {
+    list.innerHTML = '<div class="dm-deliv-empty">No deliverables yet — add one below</div>';
+    return;
+  }
+  list.innerHTML = items_.map((dl, idx) => `
+    <div class="dm-deliv-row">
+      <div class="dm-deliv-check${dl.done?' checked':''}" onclick="toggleDeliverable(${idx})">${dl.done?'✓':''}</div>
+      <span class="dm-deliv-text${dl.done?' checked':''}">${esc(dl.text)}</span>
+      <button class="dm-deliv-del" onclick="removeDeliverable(${idx})" title="Remove">✕</button>
+    </div>`).join('');
+}
+
+function handleDelivInput(e) {
   if (e.key==='Enter') {
     e.preventDefault();
     const val = e.target.value.trim();
     if (val) {
-      if (!details[activeDetailId].tags) details[activeDetailId].tags = [];
-      details[activeDetailId].tags.push(val);
+      if (!details[activeDetailId].deliverables) details[activeDetailId].deliverables = [];
+      details[activeDetailId].deliverables.push({ text: val, done: false });
       e.target.value = '';
-      renderTags();
+      renderDeliverables();
       saveDetailModal();
     }
   }
 }
 
-function removeTag(idx) {
-  details[activeDetailId].tags.splice(idx,1);
-  renderTags();
+function toggleDeliverable(idx) {
+  const dl = details[activeDetailId].deliverables[idx];
+  dl.done = !dl.done;
+  renderDeliverables();
+  saveDetailModal();
+}
+
+function removeDeliverable(idx) {
+  details[activeDetailId].deliverables.splice(idx,1);
+  renderDeliverables();
   saveDetailModal();
 }
 
 function saveDetailModal() {
   if (!activeDetailId) return;
   const d = details[activeDetailId];
-  d.description = document.getElementById('dm-description').value;
   d.notes = document.getElementById('dm-notes').value;
   d.updatedAt = new Date().toISOString();
   document.getElementById('dm-updated').textContent = formatDate(d.updatedAt);
@@ -1338,7 +1500,7 @@ function openExport() {
     if(colItems.length){ out+=`\n${colLabels[col].toUpperCase()}\n`; colItems.forEach(i=>{
       out+=`  · ${i.text}  [${whoLabels[i.who]} · ${topicLabels[i.topic]}]\n`;
       const d=details[i.id];
-      if(d&&d.description) out+=`      Description: ${d.description}\n`;
+      if(d&&d.deliverables&&d.deliverables.length) out+=`      Deliverables: ${d.deliverables.map(x=>(x.done?'[x] ':'[ ] ')+x.text).join('; ')}\n`;
       if(d&&d.tags&&d.tags.length) out+=`      Teams affected: ${d.tags.join(', ')}\n`;
     }); }
   });
