@@ -267,9 +267,95 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
 .btn-close:hover{background:var(--surface-hover)}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(8px);background:#1A1916;color:#fff;font-size:13px;padding:10px 20px;border-radius:20px;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;z-index:200;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+/* ── CARD DETAIL MODAL ── */
+.detail-modal-bg{display:none;position:fixed;inset:0;background:rgba(26,25,22,.5);z-index:300;align-items:center;justify-content:center;padding:1.5rem;backdrop-filter:blur(2px)}
+.detail-modal-bg.open{display:flex}
+.detail-modal{background:var(--surface);border-radius:var(--radius-lg);padding:1.5rem;max-width:560px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:var(--shadow-lg)}
+.dm-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem}
+.dm-title{font-size:16px;font-weight:500;color:var(--text-primary);margin-bottom:4px;line-height:1.4}
+.dm-meta{display:flex;gap:14px;font-size:11px;color:var(--text-muted);font-family:'DM Mono',monospace}
+.dm-close{background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:18px;padding:0 4px;flex-shrink:0}
+.dm-close:hover{color:var(--text-primary)}
+.dm-section{margin-bottom:1.1rem}
+.dm-label{font-size:11px;font-weight:500;color:var(--text-secondary);margin-bottom:6px;display:block;text-transform:uppercase;letter-spacing:.04em;font-family:'DM Mono',monospace}
+.dm-textarea{width:100%;font-family:'DM Sans',sans-serif;font-size:13px;padding:9px 12px;border:1px solid var(--border-strong);border-radius:var(--radius-md);background:var(--bg);color:var(--text-primary);outline:none;resize:vertical;min-height:70px;line-height:1.55}
+.dm-textarea:focus{border-color:#1A1916;box-shadow:0 0 0 3px rgba(26,25,22,.07)}
+.dm-tags-input{display:flex;flex-wrap:wrap;gap:6px;padding:8px;border:1px solid var(--border-strong);border-radius:var(--radius-md);background:var(--bg);min-height:42px;align-items:center}
+.dm-tag{font-size:11px;background:var(--badge-all);color:var(--badge-all-t);padding:3px 9px;border-radius:20px;display:flex;align-items:center;gap:5px}
+.dm-tag button{background:none;border:none;cursor:pointer;color:inherit;font-size:11px;padding:0;line-height:1;opacity:.7}
+.dm-tag button:hover{opacity:1}
+.dm-tag-input{border:none;outline:none;background:none;font-size:12px;flex:1;min-width:80px;color:var(--text-primary)}
+.dm-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--border)}
+
+/* ── IMPACT — STAKEHOLDER ROWS ── */
+.stakeholder-row{background:var(--bg);border-radius:var(--radius-sm);padding:.75rem;margin-bottom:8px;border:1px solid var(--border)}
+.sr-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px}
+.sr-name-input{font-size:12px;font-weight:500;border:none;background:none;outline:none;color:var(--text-primary);flex:1;border-bottom:1px dashed var(--border-strong);padding-bottom:2px}
+.sr-del{background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:13px;flex-shrink:0}
+.sr-del:hover{color:var(--col-drop)}
+.sr-grid{display:grid;grid-template-columns:1fr 1fr 1.3fr 1fr;gap:6px}
+.sr-field label{font-size:9px;color:var(--text-muted);display:block;margin-bottom:3px;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.03em}
+.sr-field input,.sr-field select{width:100%;font-size:11px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;background:var(--surface);color:var(--text-primary)}
+.add-stakeholder-btn{font-size:11px;border:1px dashed var(--border-strong);background:transparent;border-radius:var(--radius-sm);padding:7px 12px;cursor:pointer;color:var(--text-secondary);width:100%;margin-bottom:10px;transition:background .15s}
+.add-stakeholder-btn:hover{background:var(--surface-hover)}
+.impact-total-bar{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.7rem 1rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.itb-hrs{font-size:12px;color:var(--text-secondary)}
+.itb-cost{font-size:14px;font-weight:500;color:#1A7A5E}
+.itb-cost.hidden-cost{color:var(--text-muted);font-style:italic;font-weight:400;font-size:11px}
+.other-impact-textarea{width:100%;font-family:'DM Sans',sans-serif;font-size:12px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);min-height:55px;outline:none;resize:vertical;line-height:1.5}
+.other-impact-textarea:focus{border-color:#1A1916}
+
+/* ── RATE MANAGER (you only) ── */
+.rate-manager-toggle{font-size:11px;color:#5046A0;cursor:pointer;text-decoration:underline;text-underline-offset:2px;background:none;border:none;padding:0}
+.rate-panel{display:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1.25rem}
+.rate-panel.visible{display:block}
+.rate-panel-title{font-size:13px;font-weight:500;margin-bottom:4px}
+.rate-panel-desc{font-size:11px;color:var(--text-muted);margin-bottom:1rem;line-height:1.5}
+.rate-cat-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)}
+.rate-cat-row:last-child{border-bottom:none}
+.rate-cat-name{font-size:12px;flex:1;border:none;background:none;outline:none;color:var(--text-primary)}
+.rate-cat-rate{display:flex;align-items:center;gap:4px}
+.rate-cat-rate input{width:55px;font-size:12px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;background:var(--bg)}
+.rate-cat-del{background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:13px;margin-left:8px}
+.rate-cat-del:hover{color:var(--col-drop)}
+.add-rate-btn{font-size:11px;color:var(--text-muted);background:none;border:none;cursor:pointer;padding:8px 0 0;text-align:left}
+.add-rate-btn:hover{color:var(--text-primary)}
+.lock-badge{font-size:9px;background:var(--badge-other);color:var(--badge-other-t);padding:2px 7px;border-radius:20px;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.04em}
+
+/* card clickable affordance */
+.card{cursor:pointer}
+.card-expand-hint{font-size:9px;color:var(--text-muted);margin-top:4px;font-style:italic}
+/* ── PASSWORD GATE ── */
+.gate-screen{position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;align-items:center;justify-content:center;padding:2rem}
+.gate-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2.5rem;max-width:380px;width:100%;text-align:center;box-shadow:var(--shadow-lg)}
+.gate-icon{width:44px;height:44px;border-radius:50%;background:var(--text-primary);color:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;font-size:18px}
+.gate-title{font-size:18px;font-weight:500;color:var(--text-primary);margin-bottom:6px}
+.gate-sub{font-size:13px;color:var(--text-secondary);margin-bottom:1.5rem;line-height:1.55}
+.gate-input{width:100%;font-size:14px;padding:11px 14px;border:1px solid var(--border-strong);border-radius:var(--radius-md);background:var(--bg);color:var(--text-primary);outline:none;text-align:center;margin-bottom:.75rem;transition:border-color .2s}
+.gate-input:focus{border-color:var(--text-primary)}
+.gate-btn{width:100%;font-size:13px;font-weight:500;padding:11px;background:var(--text-primary);color:#fff;border:none;border-radius:var(--radius-md);cursor:pointer;transition:opacity .2s}
+.gate-btn:hover{opacity:.85}
+.gate-error{font-size:12px;color:var(--col-drop);margin-top:.6rem;display:none}
+.gate-error.show{display:block}
+.app-content{display:none}
+.app-content.unlocked{display:block}
 </style>
 </head>
 <body>
+
+<!-- PASSWORD GATE -->
+<div class="gate-screen" id="gate-screen">
+  <div class="gate-box">
+    <div class="gate-icon">🔒</div>
+    <div class="gate-title">Customer Intelligence & Technology Team Roadmap</div>
+    <div class="gate-sub">Enter the shared password to access the board.</div>
+    <input type="password" class="gate-input" id="gate-input" placeholder="Password" onkeydown="if(event.key==='Enter')checkPassword()" />
+    <button class="gate-btn" onclick="checkPassword()">Unlock →</button>
+    <div class="gate-error" id="gate-error">Incorrect password — try again.</div>
+  </div>
+</div>
+
+<div class="app-content" id="app-content">
 
 <!-- TAB BAR -->
 <div class="tab-bar">
@@ -314,9 +400,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
       <input type="text" id="item-input" placeholder="e.g. Automate email escalation routing" />
       <select id="topic-sel">
         <option value="cx">CX</option>
-        <option value="cx">AP</option>
-        <option value="ops">Logistics</option>
-        <option value="data">PS</option>
+        <option value="ops">Ops</option>
+        <option value="data">Data</option>
         <option value="tech">Tech</option>
         <option value="other">Other</option>
       </select>
@@ -482,7 +567,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
   </div>
 
   <div class="impact-intro" id="impact-intro">
-    <strong>How it works:</strong> Mark any scheduled initiative as <strong>Done</strong> in the quarter cards (Step 2). It'll appear here automatically. Fill in hours saved, cost savings, and which teams benefited — the dashboard above updates instantly.
+    <strong>How it works:</strong> Mark any scheduled initiative as <strong>Done</strong> in the quarter cards (Step 2). It'll appear here automatically. Log hours saved per stakeholder team — cost totals are calculated using rate categories only you can see and edit.
+    <div style="margin-top:8px"><button class="rate-manager-toggle" onclick="toggleRatePanel()">Manage rate categories <span class="lock-badge">Manager only</span></button></div>
+  </div>
+
+  <!-- RATE MANAGER PANEL -->
+  <div class="rate-panel" id="rate-panel">
+    <div class="rate-panel-title">Rate categories</div>
+    <div class="rate-panel-desc">Used to calculate cost savings. These are blended estimates, not individual salaries — only you can see or edit them. Your team sees the resulting hours/cost totals, never the underlying rate.</div>
+    <div id="rate-cat-rows"></div>
+    <button class="add-rate-btn" onclick="addRateCategory()">+ Add another category</button>
   </div>
 
   <!-- KPI dashboard -->
@@ -521,20 +615,46 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
     </div>
   </div>
 
-  <!-- Log table -->
+  <!-- Log — one card per completed initiative -->
   <div class="section-label">Initiative log</div>
-  <div class="log-wrap">
-    <div class="log-table-header">
-      <div class="log-th">Initiative</div>
-      <div class="log-th">Hrs saved/wk</div>
-      <div class="log-th">Cost saved ($)</div>
-      <div class="log-th">Teams impacted</div>
-      <div class="log-th">Quarter</div>
-      <div class="log-th">Notes</div>
+  <div id="impact-log-cards"></div>
+  <div class="log-empty" id="log-empty" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg)">Mark initiatives as <strong>Done</strong> in the quarter cards — they'll appear here ready to fill in.</div>
+</div>
+
+<!-- CARD DETAIL MODAL -->
+<div class="detail-modal-bg" id="detail-modal">
+  <div class="detail-modal">
+    <div class="dm-header">
+      <div>
+        <div class="dm-title" id="dm-title">Initiative name</div>
+        <div class="dm-meta">
+          <span><i></i>Added <span id="dm-added">—</span></span>
+          <span>Updated <span id="dm-updated">—</span></span>
+        </div>
+      </div>
+      <button class="dm-close" onclick="closeDetailModal()" title="Close">✕</button>
     </div>
-    <div id="log-rows"></div>
-    <div id="log-totals-row"></div>
-    <div class="log-empty" id="log-empty">Mark initiatives as <strong>Done</strong> in the quarter cards — they'll appear here ready to fill in.</div>
+
+    <div class="dm-section">
+      <label class="dm-label">Description / deliverables</label>
+      <textarea class="dm-textarea" id="dm-description" placeholder="What does done look like for this initiative?" onchange="saveDetailModal()"></textarea>
+    </div>
+
+    <div class="dm-section">
+      <label class="dm-label">Other teams affected</label>
+      <div class="dm-tags-input" id="dm-tags-wrap">
+        <input type="text" class="dm-tag-input" id="dm-tag-input" placeholder="Type a team and press Enter..." onkeydown="handleTagInput(event)" />
+      </div>
+    </div>
+
+    <div class="dm-section">
+      <label class="dm-label">Status notes</label>
+      <textarea class="dm-textarea" id="dm-notes" placeholder="Blockers, context, anything worth flagging..." style="min-height:50px" onchange="saveDetailModal()"></textarea>
+    </div>
+
+    <div class="dm-footer">
+      <button class="btn-close" onclick="closeDetailModal()">Done</button>
+    </div>
   </div>
 </div>
 
@@ -601,7 +721,7 @@ async function dbLoad() {
 }
 
 function getState() {
-  return { items, tItems, status, impact };
+  return { items, tItems, status, impact, details, rateCategories };
 }
 
 function applyState(state) {
@@ -610,6 +730,8 @@ function applyState(state) {
   tItems = state.tItems || {};
   status = state.status || {};
   impact = state.impact || {};
+  details = state.details || {};
+  rateCategories = state.rateCategories || rateCategories;
 }
 
 function showSaveStatus(s) {
@@ -632,8 +754,15 @@ function triggerSave() {
 let items  = [];   // {id, text, topic, who, col}
 let tItems = {};   // id → 'pool'|'q1'|'q2'|'q3'|'q4'
 let status = {};   // id → 'planned'|'progress'|'done'
-let impact = {};   // id → {hrs, cost, teams, notes}
+let impact = {};   // id → {stakeholders:[{name,before,after,rateId,freq}], notes}
+let details = {};  // id → {description, tags:[], notes, addedAt, updatedAt}
+let rateCategories = [
+  { id:'r1', name:'Agent / frontline', rate:30 },
+  { id:'r2', name:'Analyst', rate:45 },
+  { id:'r3', name:'My team', rate:50 },
+];
 let dragId = null, dragSrc = null, currentWho = 'all';
+let activeDetailId = null;
 
 const whoLabels   = {all:'Everyone', ba:'Senior BA', crm:'CRM specialist', you:'You'};
 const topicLabels = {cx:'CX', ops:'Ops', data:'Data', tech:'Tech', other:'Other'};
@@ -672,16 +801,18 @@ function addItem() {
   const text = inp.value.trim();
   if (!text) { inp.focus(); return; }
   const id = 'i'+Date.now()+Math.floor(Math.random()*9999);
+  const now = new Date().toISOString();
   items.push({id, text, topic, who: currentWho, col:'now'});
   tItems[id] = 'pool';
   status[id] = 'planned';
+  details[id] = { description:'', tags:[], notes:'', addedAt: now, updatedAt: now };
   inp.value=''; inp.focus();
   render();
   triggerSave();
 }
 document.getElementById('item-input').addEventListener('keydown', e => { if(e.key==='Enter') addItem(); });
 
-function delItem(id)  { items=items.filter(i=>i.id!==id); delete tItems[id]; delete status[id]; delete impact[id]; render(); triggerSave(); }
+function delItem(id)  { items=items.filter(i=>i.id!==id); delete tItems[id]; delete status[id]; delete impact[id]; delete details[id]; render(); triggerSave(); }
 function delTItem(id) { delete tItems[id]; status[id]='planned'; render(); triggerSave(); }
 
 // ── STATUS CYCLE ──
@@ -739,7 +870,9 @@ function makeCard(item) {
   d.className='card'; d.draggable=true; d.dataset.id=item.id;
   d.addEventListener('dragstart',e=>kDragStart(e,item.id));
   d.addEventListener('dragend',()=>kDragEnd(item.id));
-  d.innerHTML=`<div class="card-top"><span class="card-text">${esc(item.text)}</span><button class="card-del" onclick="delItem('${item.id}')" title="Remove">✕</button></div><div class="card-meta"><span class="badge badge-who-${item.who}">${whoLabels[item.who]}</span><span class="badge badge-topic-${item.topic}">${topicLabels[item.topic]}</span></div>`;
+  d.addEventListener('click',e=>{ if(e.target.closest('.card-del')) return; openDetailModal(item.id); });
+  const hasDetail = details[item.id] && (details[item.id].description || (details[item.id].tags&&details[item.id].tags.length));
+  d.innerHTML=`<div class="card-top"><span class="card-text">${esc(item.text)}</span><button class="card-del" onclick="delItem('${item.id}')" title="Remove">✕</button></div><div class="card-meta"><span class="badge badge-who-${item.who}">${whoLabels[item.who]}</span><span class="badge badge-topic-${item.topic}">${topicLabels[item.topic]}</span></div>${hasDetail?'<div class="card-expand-hint">Has details — click to view</div>':'<div class="card-expand-hint">Click to add details</div>'}`;
   return d;
 }
 
@@ -750,6 +883,7 @@ function makeTCard(item) {
   d.className='t-card status-'+st; d.draggable=true; d.dataset.tid=item.id;
   d.addEventListener('dragstart',e=>tDragStart(e,item.id));
   d.addEventListener('dragend',()=>tDragEnd(item.id));
+  d.addEventListener('click',e=>{ if(e.target.closest('.t-card-del')||e.target.closest('.status-toggle')) return; openDetailModal(item.id); });
   d.innerHTML=`
     <div class="t-card-top">
       <span class="t-card-text">${esc(item.text)}</span>
@@ -774,6 +908,7 @@ function makePoolChip(item) {
   d.className='pool-card'; d.draggable=true; d.dataset.tid=item.id;
   d.addEventListener('dragstart',e=>tDragStart(e,item.id));
   d.addEventListener('dragend',()=>tDragEnd(item.id));
+  d.addEventListener('click',e=>openDetailModal(item.id));
   d.innerHTML=`<span style="font-size:12px;color:var(--text-primary)">${esc(item.text)}</span><span class="badge badge-topic-${item.topic}">${topicLabels[item.topic]}</span>`;
   return d;
 }
@@ -894,116 +1029,318 @@ function renderHolistic() {
 }
 
 // ── RENDER IMPACT ──
+// ── RATE MANAGER (manager-only) ──
+function toggleRatePanel() {
+  document.getElementById('rate-panel').classList.toggle('visible');
+  renderRateCategories();
+}
+
+function renderRateCategories() {
+  const el = document.getElementById('rate-cat-rows');
+  el.innerHTML = '';
+  rateCategories.forEach(cat => {
+    const row = document.createElement('div');
+    row.className = 'rate-cat-row';
+    row.innerHTML = `
+      <input type="text" class="rate-cat-name" value="${esc(cat.name)}" onchange="updateRateCategory('${cat.id}','name',this.value)" />
+      <div class="rate-cat-rate">
+        <span style="font-size:12px;color:var(--text-muted)">$</span>
+        <input type="number" min="0" value="${cat.rate}" onchange="updateRateCategory('${cat.id}','rate',this.value)" />
+        <span style="font-size:11px;color:var(--text-muted)">/hr</span>
+        <button class="rate-cat-del" onclick="deleteRateCategory('${cat.id}')" title="Remove">✕</button>
+      </div>`;
+    el.appendChild(row);
+  });
+}
+
+function addRateCategory() {
+  const id = 'r'+Date.now();
+  rateCategories.push({ id, name:'New category', rate:0 });
+  renderRateCategories();
+  triggerSave();
+}
+
+function updateRateCategory(id, field, val) {
+  const cat = rateCategories.find(c=>c.id===id);
+  if (!cat) return;
+  cat[field] = field==='rate' ? (parseFloat(val)||0) : val;
+  triggerSave();
+  renderImpact();
+}
+
+function deleteRateCategory(id) {
+  rateCategories = rateCategories.filter(c=>c.id!==id);
+  renderRateCategories();
+  triggerSave();
+  renderImpact();
+}
+
+function rateName(id) {
+  const cat = rateCategories.find(c=>c.id===id);
+  return cat ? cat.name : 'Unknown';
+}
+function rateValue(id) {
+  const cat = rateCategories.find(c=>c.id===id);
+  return cat ? cat.rate : 0;
+}
+
+// ── STAKEHOLDER ROW CALCULATIONS ──
+function calcStakeholderRow(row) {
+  const before = parseFloat(row.before)||0;
+  const after = parseFloat(row.after)||0;
+  const freq = parseFloat(row.freq)||1;
+  const hrsSaved = Math.max(before-after, 0);
+  const weeklyHrs = freq===52 ? hrsSaved : (freq===12 ? hrsSaved*12/52 : (freq===4 ? hrsSaved*4/52 : hrsSaved/52));
+  const annualHrs = hrsSaved * freq;
+  const rate = rateValue(row.rateId);
+  const annualCost = annualHrs * rate;
+  return { hrsSaved, weeklyHrs, annualHrs, annualCost };
+}
+
+function calcInitiativeTotals(id) {
+  const imp = impact[id];
+  if (!imp || !imp.stakeholders || !imp.stakeholders.length) return { weeklyHrs:0, annualHrs:0, annualCost:0, teams:[] };
+  let weeklyHrs=0, annualHrs=0, annualCost=0;
+  const teams=[];
+  imp.stakeholders.forEach(row=>{
+    const c = calcStakeholderRow(row);
+    weeklyHrs += c.weeklyHrs; annualHrs += c.annualHrs; annualCost += c.annualCost;
+    if (row.name) teams.push(row.name);
+  });
+  return { weeklyHrs, annualHrs, annualCost, teams };
+}
+
+// ── IMPACT LOG — CARD PER INITIATIVE ──
 function renderImpact() {
   const keepItems=items.filter(i=>i.col==='now');
   const doneItems=keepItems.filter(i=>tItems[i.id]&&tItems[i.id]!=='pool'&&status[i.id]==='done');
 
-  // ensure impact entries exist
-  doneItems.forEach(i=>{ if(!impact[i.id]) impact[i.id]={hrs:'',cost:'',teams:'',notes:''}; });
+  doneItems.forEach(i=>{ if(!impact[i.id]) impact[i.id]={stakeholders:[],notes:''}; });
 
-  const logEl=document.getElementById('log-rows');
-  const totEl=document.getElementById('log-totals-row');
-  const emptyEl=document.getElementById('log-empty');
-  logEl.innerHTML='';
+  const wrapEl = document.getElementById('impact-log-cards');
+  const emptyEl = document.getElementById('log-empty');
+  wrapEl.innerHTML = '';
 
-  if(doneItems.length===0){
+  if (doneItems.length===0) {
     emptyEl.style.display='block';
-    totEl.innerHTML='';
     renderImpactDash([]);
     return;
   }
   emptyEl.style.display='none';
 
-  doneItems.forEach(item=>{
-    const imp=impact[item.id];
-    const row=document.createElement('div');
-    row.className='log-row-grid';
-    row.innerHTML=`
-      <div class="log-name-cell">
-        <div class="log-name">${esc(item.text)}</div>
-        <div class="log-sub">${topicLabels[item.topic]} · ${whoLabels[item.who]}</div>
-      </div>
-      <div class="log-cell"><input type="number" min="0" placeholder="e.g. 5" value="${esc(imp.hrs)}" onchange="updateImpact('${item.id}','hrs',this.value)" onclick="this.select()" /></div>
-      <div class="log-cell"><input type="number" min="0" placeholder="e.g. 2000" value="${esc(imp.cost)}" onchange="updateImpact('${item.id}','cost',this.value)" onclick="this.select()" /></div>
-      <div class="log-cell"><input type="text" placeholder="e.g. CX, AP, Sales" value="${esc(imp.teams)}" onchange="updateImpact('${item.id}','teams',this.value)" onclick="this.select()" /></div>
-      <div class="log-cell" style="color:var(--text-secondary);font-size:11px">${qLabels[tItems[item.id]]||''}</div>
-      <div class="log-cell"><input type="text" placeholder="Add a note…" value="${esc(imp.notes)}" onchange="updateImpact('${item.id}','notes',this.value)" onclick="this.select()" /></div>`;
-    logEl.appendChild(row);
-  });
+  doneItems.forEach(item => {
+    const imp = impact[item.id];
+    const card = document.createElement('div');
+    card.className = 'log-wrap';
+    card.style.marginBottom = '14px';
+    card.style.padding = '1.1rem 1.25rem';
 
-  // totals
-  const totalHrs=doneItems.reduce((s,i)=>s+(parseFloat(impact[i.id]?.hrs)||0),0);
-  const totalCost=doneItems.reduce((s,i)=>s+(parseFloat(impact[i.id]?.cost)||0),0);
-  totEl.innerHTML=`<div class="log-totals-row">
-    <div class="log-total-cell">Totals</div>
-    <div class="log-total-cell">${totalHrs>0?totalHrs+' hrs/wk':'—'}</div>
-    <div class="log-total-cell">${totalCost>0?'$'+totalCost.toLocaleString():'—'}</div>
-    <div class="log-total-cell"></div>
-    <div class="log-total-cell"></div>
-    <div class="log-total-cell"></div>
-  </div>`;
+    const stakeholderRowsHtml = (imp.stakeholders||[]).map((row,idx) => {
+      const calc = calcStakeholderRow(row);
+      return `<div class="stakeholder-row">
+        <div class="sr-header">
+          <input type="text" class="sr-name-input" placeholder="Team or role affected (e.g. Sales, CX)" value="${esc(row.name||'')}" onchange="updateStakeholderField('${item.id}',${idx},'name',this.value)" />
+          <button class="sr-del" onclick="removeStakeholderRow('${item.id}',${idx})" title="Remove">✕</button>
+        </div>
+        <div class="sr-grid">
+          <div class="sr-field"><label>Before (hrs)</label><input type="number" min="0" step="0.5" value="${row.before||''}" onchange="updateStakeholderField('${item.id}',${idx},'before',this.value)" /></div>
+          <div class="sr-field"><label>After (hrs)</label><input type="number" min="0" step="0.5" value="${row.after||''}" onchange="updateStakeholderField('${item.id}',${idx},'after',this.value)" /></div>
+          <div class="sr-field"><label>Rate category</label><select onchange="updateStakeholderField('${item.id}',${idx},'rateId',this.value)">${rateCategories.map(c=>`<option value="${c.id}" ${row.rateId===c.id?'selected':''}>${esc(c.name)}</option>`).join('')}</select></div>
+          <div class="sr-field"><label>Frequency</label><select onchange="updateStakeholderField('${item.id}',${idx},'freq',this.value)">
+            <option value="1" ${row.freq=='1'?'selected':''}>One-time</option>
+            <option value="52" ${row.freq=='52'||!row.freq?'selected':''}>Weekly</option>
+            <option value="12" ${row.freq=='12'?'selected':''}>Monthly</option>
+            <option value="4" ${row.freq=='4'?'selected':''}>Quarterly</option>
+          </select></div>
+        </div>
+        <div style="margin-top:6px;font-size:11px;color:var(--text-muted)">${calc.hrsSaved.toFixed(1)} hrs saved per occurrence · ${calc.weeklyHrs.toFixed(1)} hrs/wk equiv</div>
+      </div>`;
+    }).join('');
+
+    const totals = calcInitiativeTotals(item.id);
+
+    card.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.85rem">
+        <div>
+          <div class="log-name" style="font-size:14px">${esc(item.text)}</div>
+          <div class="log-sub">${topicLabels[item.topic]} · ${whoLabels[item.who]} · ${qLabels[tItems[item.id]]||''}</div>
+        </div>
+      </div>
+      ${stakeholderRowsHtml}
+      <button class="add-stakeholder-btn" onclick="addStakeholderRow('${item.id}')">+ Add stakeholder team affected</button>
+      <div class="impact-total-bar">
+        <span class="itb-hrs">${totals.weeklyHrs>0?totals.weeklyHrs.toFixed(1)+' hrs/wk saved across '+(imp.stakeholders||[]).length+' team(s)':'No hours logged yet'}</span>
+        <span class="itb-cost">${totals.annualCost>0?'$'+Math.round(totals.annualCost).toLocaleString()+'/year':''}</span>
+      </div>
+      <label style="font-size:11px;font-weight:500;color:var(--text-secondary);display:block;margin:10px 0 4px">Other impact <span style="font-weight:400;color:var(--text-muted)">(optional — qualitative wins)</span></label>
+      <textarea class="other-impact-textarea" placeholder="e.g. improved visibility, leadership now references this, fewer errors..." onchange="updateOtherImpact('${item.id}',this.value)">${esc(imp.notes||'')}</textarea>
+    `;
+    wrapEl.appendChild(card);
+  });
 
   renderImpactDash(doneItems);
 }
 
-function updateImpact(id, field, val) {
-  if(!impact[id]) impact[id]={hrs:'',cost:'',teams:'',notes:''};
-  impact[id][field]=val;
+function addStakeholderRow(id) {
+  if (!impact[id]) impact[id] = { stakeholders:[], notes:'' };
+  if (!impact[id].stakeholders) impact[id].stakeholders = [];
+  impact[id].stakeholders.push({ name:'', before:'', after:'', rateId: rateCategories[0]?.id||'', freq:'52' });
   triggerSave();
-  renderImpactDash(items.filter(i=>i.col==='now'&&tItems[i.id]&&tItems[i.id]!=='pool'&&status[i.id]==='done'));
+  renderImpact();
+}
+
+function removeStakeholderRow(id, idx) {
+  if (!impact[id] || !impact[id].stakeholders) return;
+  impact[id].stakeholders.splice(idx,1);
+  triggerSave();
+  renderImpact();
+}
+
+function updateStakeholderField(id, idx, field, val) {
+  if (!impact[id] || !impact[id].stakeholders || !impact[id].stakeholders[idx]) return;
+  impact[id].stakeholders[idx][field] = val;
+  triggerSave();
+  renderImpact();
+}
+
+function updateOtherImpact(id, val) {
+  if (!impact[id]) impact[id] = { stakeholders:[], notes:'' };
+  impact[id].notes = val;
+  triggerSave();
 }
 
 function renderImpactDash(doneItems) {
-  const totalHrs=doneItems.reduce((s,i)=>s+(parseFloat(impact[i.id]?.hrs)||0),0);
-  const totalCost=doneItems.reduce((s,i)=>s+(parseFloat(impact[i.id]?.cost)||0),0);
+  let totalWeeklyHrs=0, totalAnnualCost=0;
+  const allTeams=new Set();
+  doneItems.forEach(i=>{
+    const t = calcInitiativeTotals(i.id);
+    totalWeeklyHrs += t.weeklyHrs;
+    totalAnnualCost += t.annualCost;
+    t.teams.forEach(team=>allTeams.add(team));
+  });
+
   const keepItems=items.filter(i=>i.col==='now');
   const schedCount=keepItems.filter(i=>tItems[i.id]&&tItems[i.id]!=='pool').length;
 
-  // team count
-  const allTeams=new Set();
-  doneItems.forEach(i=>{ (impact[i.id]?.teams||'').split(',').map(t=>t.trim()).filter(Boolean).forEach(t=>allTeams.add(t)); });
+  document.getElementById('imp-hrs').textContent = totalWeeklyHrs>0 ? totalWeeklyHrs.toFixed(1) : '0';
+  document.getElementById('imp-hrs-ann').textContent = totalWeeklyHrs>0 ? '≈ '+Math.round(totalWeeklyHrs*52)+' hrs/year' : '—';
+  document.getElementById('imp-cost').textContent = totalAnnualCost>0 ? '$'+Math.round(totalAnnualCost).toLocaleString() : '$0';
+  document.getElementById('imp-cost-ann').textContent = totalAnnualCost>0 ? 'annualised estimate' : '—';
+  document.getElementById('imp-teams').textContent = allTeams.size||0;
+  document.getElementById('imp-teams-list').textContent = allTeams.size?[...allTeams].slice(0,3).join(', ')+(allTeams.size>3?' +more':''):'—';
+  document.getElementById('imp-count').textContent = doneItems.length;
+  document.getElementById('imp-of').textContent = 'of '+schedCount+' planned';
 
-  document.getElementById('imp-hrs').textContent=totalHrs>0?totalHrs:'0';
-  document.getElementById('imp-hrs-ann').textContent=totalHrs>0?'≈ '+(Math.round(totalHrs*52))+' hrs/year':'—';
-  document.getElementById('imp-cost').textContent=totalCost>0?'$'+totalCost.toLocaleString():'$0';
-  document.getElementById('imp-cost-ann').textContent=totalCost>0?'≈ $'+Math.round(totalCost*52).toLocaleString()+'/year':'—';
-  document.getElementById('imp-teams').textContent=allTeams.size||0;
-  document.getElementById('imp-teams-list').textContent=allTeams.size?[...allTeams].slice(0,3).join(', ')+(allTeams.size>3?' +more':''):'—';
-  document.getElementById('imp-count').textContent=doneItems.length;
-  document.getElementById('imp-of').textContent='of '+schedCount+' planned';
-
-  // bars
   const barsEl=document.getElementById('imp-bars');
-  const itemsWithHrs=doneItems.filter(i=>parseFloat(impact[i.id]?.hrs)>0);
-  const maxHrs=Math.max(...itemsWithHrs.map(i=>parseFloat(impact[i.id].hrs)||0),1);
-  if(itemsWithHrs.length===0){
-    barsEl.innerHTML='<div style="font-size:12px;color:var(--text-muted);font-style:italic">Fill in hours saved to see chart</div>';
+  const itemsWithHrs = doneItems.map(i=>({ item:i, hrs: calcInitiativeTotals(i.id).weeklyHrs })).filter(x=>x.hrs>0);
+  const maxHrs = Math.max(...itemsWithHrs.map(x=>x.hrs), 1);
+  if (itemsWithHrs.length===0) {
+    barsEl.innerHTML = '<div style="font-size:12px;color:var(--text-muted);font-style:italic">Log hours saved to see chart</div>';
   } else {
-    barsEl.innerHTML=itemsWithHrs.map(i=>{
-      const h=parseFloat(impact[i.id].hrs)||0;
-      const pct=Math.round((h/maxHrs)*100);
-      return `<div class="bar-row"><div class="bar-label" title="${esc(i.text)}">${esc(i.text)}</div><div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div><div class="bar-val">${h} h</div></div>`;
+    barsEl.innerHTML = itemsWithHrs.map(x=>{
+      const pct = Math.round((x.hrs/maxHrs)*100);
+      return `<div class="bar-row"><div class="bar-label" title="${esc(x.item.text)}">${esc(x.item.text)}</div><div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div><div class="bar-val">${x.hrs.toFixed(1)} h</div></div>`;
     }).join('');
   }
 
-  // teams breakdown
   const teamsEl=document.getElementById('imp-teams-breakdown');
   const teamMap={};
-  doneItems.forEach(i=>{ (impact[i.id]?.teams||'').split(',').map(t=>t.trim()).filter(Boolean).forEach(t=>{ teamMap[t]=(teamMap[t]||0)+1; }); });
+  doneItems.forEach(i=>{ calcInitiativeTotals(i.id).teams.forEach(t=>{ teamMap[t]=(teamMap[t]||0)+1; }); });
   const teamEntries=Object.entries(teamMap).sort((a,b)=>b[1]-a[1]);
-  if(teamEntries.length===0){
-    teamsEl.innerHTML='<div style="font-size:12px;color:var(--text-muted);font-style:italic">Fill in teams impacted to see breakdown</div>';
+  if (teamEntries.length===0) {
+    teamsEl.innerHTML = '<div style="font-size:12px;color:var(--text-muted);font-style:italic">Add stakeholder teams to see breakdown</div>';
   } else {
-    teamsEl.innerHTML=teamEntries.map(([name,count])=>`<div class="team-row"><span class="team-name">${esc(name)}</span><span class="team-count">${count} initiative${count!==1?'s':''}</span></div>`).join('');
+    teamsEl.innerHTML = teamEntries.map(([name,count])=>`<div class="team-row"><span class="team-name">${esc(name)}</span><span class="team-count">${count} initiative${count!==1?'s':''}</span></div>`).join('');
   }
 }
 
+// ── CARD DETAIL MODAL ──
+function openDetailModal(id) {
+  activeDetailId = id;
+  const item = items.find(i=>i.id===id);
+  if (!item) return;
+  if (!details[id]) details[id] = { description:'', tags:[], notes:'', addedAt:new Date().toISOString(), updatedAt:new Date().toISOString() };
+  const d = details[id];
+
+  document.getElementById('dm-title').textContent = item.text;
+  document.getElementById('dm-added').textContent = formatDate(d.addedAt);
+  document.getElementById('dm-updated').textContent = formatDate(d.updatedAt);
+  document.getElementById('dm-description').value = d.description||'';
+  document.getElementById('dm-notes').value = d.notes||'';
+  renderTags();
+  document.getElementById('detail-modal').classList.add('open');
+}
+
+function formatDate(iso) {
+  if (!iso) return '—';
+  const date = new Date(iso);
+  return date.toLocaleDateString('en-US', { month:'short', day:'numeric' });
+}
+
+function renderTags() {
+  const wrap = document.getElementById('dm-tags-wrap');
+  const input = document.getElementById('dm-tag-input');
+  wrap.querySelectorAll('.dm-tag').forEach(t=>t.remove());
+  const tags = details[activeDetailId]?.tags || [];
+  tags.forEach((tag,idx) => {
+    const span = document.createElement('span');
+    span.className = 'dm-tag';
+    span.innerHTML = `${esc(tag)} <button onclick="removeTag(${idx})">✕</button>`;
+    wrap.insertBefore(span, input);
+  });
+}
+
+function handleTagInput(e) {
+  if (e.key==='Enter') {
+    e.preventDefault();
+    const val = e.target.value.trim();
+    if (val) {
+      if (!details[activeDetailId].tags) details[activeDetailId].tags = [];
+      details[activeDetailId].tags.push(val);
+      e.target.value = '';
+      renderTags();
+      saveDetailModal();
+    }
+  }
+}
+
+function removeTag(idx) {
+  details[activeDetailId].tags.splice(idx,1);
+  renderTags();
+  saveDetailModal();
+}
+
+function saveDetailModal() {
+  if (!activeDetailId) return;
+  const d = details[activeDetailId];
+  d.description = document.getElementById('dm-description').value;
+  d.notes = document.getElementById('dm-notes').value;
+  d.updatedAt = new Date().toISOString();
+  document.getElementById('dm-updated').textContent = formatDate(d.updatedAt);
+  triggerSave();
+}
+
+function closeDetailModal() {
+  saveDetailModal();
+  document.getElementById('detail-modal').classList.remove('open');
+  activeDetailId = null;
+  render();
+}
+
+document.getElementById('detail-modal').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeDetailModal(); });
+
 // ── EXPORT ──
 function openExport() {
+
   let out='TEAM ROADMAP — Full summary\n'+'='.repeat(40)+'\n\n';
   ['now','later','rethink','drop'].forEach(col=>{
     const colItems=items.filter(i=>i.col===col);
-    if(colItems.length){ out+=`\n${colLabels[col].toUpperCase()}\n`; colItems.forEach(i=>out+=`  · ${i.text}  [${whoLabels[i.who]} · ${topicLabels[i.topic]}]\n`); }
+    if(colItems.length){ out+=`\n${colLabels[col].toUpperCase()}\n`; colItems.forEach(i=>{
+      out+=`  · ${i.text}  [${whoLabels[i.who]} · ${topicLabels[i.topic]}]\n`;
+      const d=details[i.id];
+      if(d&&d.description) out+=`      Description: ${d.description}\n`;
+      if(d&&d.tags&&d.tags.length) out+=`      Teams affected: ${d.tags.join(', ')}\n`;
+    }); }
   });
   out+='\n\nFISCAL YEAR SCHEDULE\n'+'-'.repeat(30)+'\n';
   const keepItems=items.filter(i=>i.col==='now');
@@ -1016,11 +1353,12 @@ function openExport() {
     out+='\n\nIMPACT LOG\n'+'-'.repeat(30)+'\n';
     doneItems.forEach(i=>{
       const imp=impact[i.id]||{};
+      const totals=calcInitiativeTotals(i.id);
       out+=`\n· ${i.text}\n`;
-      if(imp.hrs) out+=`  Hours saved/wk: ${imp.hrs}\n`;
-      if(imp.cost) out+=`  Cost saved: $${parseFloat(imp.cost).toLocaleString()}\n`;
-      if(imp.teams) out+=`  Teams: ${imp.teams}\n`;
-      if(imp.notes) out+=`  Notes: ${imp.notes}\n`;
+      if(totals.weeklyHrs>0) out+=`  Hours saved/wk: ${totals.weeklyHrs.toFixed(1)}\n`;
+      if(totals.annualCost>0) out+=`  Cost saved (annualised): $${Math.round(totals.annualCost).toLocaleString()}\n`;
+      if(totals.teams.length) out+=`  Teams: ${totals.teams.join(', ')}\n`;
+      if(imp.notes) out+=`  Other impact: ${imp.notes}\n`;
     });
   }
   out+='\n'+'='.repeat(40)+'\n';
@@ -1047,13 +1385,46 @@ async function init() {
   render();
 }
 
-// Only init with Supabase if config is filled in
-if (SUPABASE_URL !== 'PASTE_YOUR_SUPABASE_URL_HERE') {
-  init();
+// ── PASSWORD GATE ──
+const GATE_PASSWORD = 'citjune26';
+const GATE_SESSION_KEY = 'roadmap_unlocked';
+
+function checkPassword() {
+  const val = document.getElementById('gate-input').value;
+  if (val === GATE_PASSWORD) {
+    sessionStorage.setItem(GATE_SESSION_KEY, 'true');
+    unlockApp();
+  } else {
+    document.getElementById('gate-error').classList.add('show');
+    document.getElementById('gate-input').value = '';
+    document.getElementById('gate-input').focus();
+  }
+}
+
+function unlockApp() {
+  document.getElementById('gate-screen').style.display = 'none';
+  document.getElementById('app-content').classList.add('unlocked');
+  startApp();
+}
+
+function startApp() {
+  // Only init with Supabase if config is filled in
+  if (SUPABASE_URL !== 'PASTE_YOUR_SUPABASE_URL_HERE') {
+    init();
+  } else {
+    render();
+    console.warn('Supabase not configured — running without persistence. Fill in SUPABASE_URL and SUPABASE_ANON_KEY.');
+  }
+  renderRateCategories();
+}
+
+// Check if already unlocked this session (remembers for the browser tab/session)
+if (sessionStorage.getItem(GATE_SESSION_KEY) === 'true') {
+  unlockApp();
 } else {
-  render();
-  console.warn('Supabase not configured — running without persistence. Fill in SUPABASE_URL and SUPABASE_ANON_KEY.');
+  document.getElementById('gate-input').focus();
 }
 </script>
+</div>
 </body>
 </html>
