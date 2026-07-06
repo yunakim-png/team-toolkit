@@ -192,19 +192,18 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
 .matrix-scroll::-webkit-scrollbar{height:5px}
 .matrix-scroll::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:3px}
 .mtx{border-collapse:collapse;width:100%;min-width:820px}
-.mtx td.data-cell{padding:5px 4px;vertical-align:top;border-right:0.5px solid var(--border);border-bottom:0.5px solid var(--border);min-width:62px;max-width:62px}
+.mtx td.data-cell{padding:5px 6px;vertical-align:top;border-right:0.5px solid var(--border);border-bottom:0.5px solid var(--border)}
 .mtx tr:last-child td{border-bottom:none}
 .mtx td.row-cat{font-size:11px;color:var(--text-secondary);padding:8px 10px;white-space:nowrap;border-right:1px solid var(--border-strong);border-bottom:0.5px solid var(--border);background:var(--surface-hover);font-weight:500;vertical-align:middle;width:68px}
-.m-chip{font-size:10px;padding:3px 6px;border-radius:3px;line-height:1.3;display:block;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.m-chip-cx{background:var(--badge-cx);color:var(--badge-cx-t)}
-.m-chip-ap{background:var(--badge-ap);color:var(--badge-ap-t)}
-.m-chip-fc{background:var(--badge-fc);color:var(--badge-fc-t)}
-.m-chip-ps{background:var(--badge-ps);color:var(--badge-ps-t)}
-.m-chip-logistics{background:var(--badge-logistics);color:var(--badge-logistics-t)}
-.m-chip-other{background:var(--badge-other);color:var(--badge-other-t)}
-.m-chip.done{opacity:.5;text-decoration:line-through}
-.m-dot{display:block;width:6px;height:6px;border-radius:50%;background:var(--border-strong);margin:6px auto 2px}
-.m-dot.done{background:#1A7A5E;opacity:.5}
+.m-chip{font-size:11px;padding:5px 10px;border-radius:20px;display:flex;align-items:center;gap:6px;margin-bottom:4px;cursor:pointer;width:100%;box-sizing:border-box;position:relative}
+.m-chip:hover{opacity:.82}
+.m-chip-text{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.m-chip-topic{font-size:9px;opacity:.65;flex-shrink:0;font-weight:500;letter-spacing:.03em}
+.m-chip.st-planned{background:#F1EFE8;color:#4A4840}
+.m-chip.st-progress{background:#FDF3E0;color:#7A4800}
+.m-chip.st-blocked{background:#FAEAE7;color:#7A2215}
+.m-chip.st-done{background:#E6F5EF;color:#0F6E56}
+.m-chip-tt{position:absolute;bottom:calc(100% + 5px);left:50%;transform:translateX(-50%);background:#1A1916;color:#fff;font-size:11px;padding:5px 10px;border-radius:6px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;z-index:20;font-family:'DM Sans',sans-serif}
 .summary-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:1.75rem}
 .sum-card{background:var(--surface-hover);border-radius:var(--radius-md);padding:14px;text-align:center}
 .sum-num{font-size:26px;font-weight:300;letter-spacing:-.02em;color:var(--text-primary)}
@@ -559,14 +558,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
   </div>
 
   <div class="legend" id="hol-legend">
-    <div class="legend-item"><div class="legend-dot" style="background:#FBE9F3;border:1px solid #D4537E"></div>CX</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#FDF3E0;border:1px solid #BA7517"></div>AP</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#E8F5E2;border:1px solid #639922"></div>PS</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#EEEDFE;border:1px solid #7F77DD"></div>Logistics</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#E6F1FB;border:1px solid #378ADD"></div>FC</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#F1EFE8;border:1px solid #888780"></div>Other</div>
-    <div class="legend-item" style="margin-left:8px;padding-left:12px;border-left:1px solid var(--border)"><div class="legend-dot" style="background:#E6F5EF;border:1px solid #1A7A5E"></div>Done (strikethrough)</div>
-    <div style="margin-left:auto;font-size:11px;color:var(--text-muted)">Scroll → to see all 12 months</div>
+    <span style="font-size:11px;font-weight:500;color:var(--text-secondary);margin-right:4px">Status:</span>
+    <div class="legend-item"><span style="font-size:10px;padding:3px 10px;border-radius:20px;background:#F1EFE8;color:#4A4840">Planned</span></div>
+    <div class="legend-item"><span style="font-size:10px;padding:3px 10px;border-radius:20px;background:#FDF3E0;color:#7A4800">In progress</span></div>
+    <div class="legend-item"><span style="font-size:10px;padding:3px 10px;border-radius:20px;background:#FAEAE7;color:#7A2215">Blocked</span></div>
+    <div class="legend-item"><span style="font-size:10px;padding:3px 10px;border-radius:20px;background:#E6F5EF;color:#0F6E56">Done</span></div>
+    <div style="margin-left:auto;font-size:11px;color:var(--text-muted)">Hover for details · Click to open card</div>
   </div>
 
   <div class="matrix-wrap" id="hol-matrix-wrap">
@@ -737,10 +734,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
 // 2. Replace the two placeholders below with your values
 // 3. Find them at: supabase.com → your project → Project Settings → API
 // ─────────────────────────────────────────────────────
-const SUPABASE_URL      = 'https://ipoxelvrqtyyuaewpqav.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_I-pQOeTo3m8GjyyO5BQxAQ_coQLQ8qo';
-const BOARD_ID          = 'main'; // unique ID for this board — leave as-is
-
+const SUPABASE_URL      = ‘https://ipoxelvrqtyyuaewpqav.supabase.co’;
+const SUPABASE_ANON_KEY = ‘sb_publishable_I-pQOeTo3m8GjyyO5BQxAQ_coQLQ8qo’;
+const BOARD_ID          = ‘main’; // unique ID for this board — leave as-is
+  
 // ── SUPABASE HELPERS ──
 async function dbSave(state) {
   try {
@@ -917,8 +914,17 @@ function tDragEnd(id) {
 }
 function dropTimeline(e,dest) {
   e.preventDefault(); e.currentTarget.classList.remove('drag-over');
-  if(!dragId||dragSrc!=='timeline') return;
-  tItems[dragId]=dest;
+  if(!dragId) return;
+  if(dragSrc==='kanban') {
+    // Card dragged from kanban — move to Keep & prioritise first, then schedule
+    const item=items.find(i=>i.id===dragId);
+    if(!item) return;
+    item.col='now';
+    tItems[dragId]=dest;
+    if(!status[dragId]) status[dragId]='planned';
+  } else if(dragSrc==='timeline') {
+    tItems[dragId]=dest;
+  } else return;
   dragId=null; dragSrc=null; render(); triggerSave();
 }
 
@@ -979,8 +985,19 @@ function render() {
   ['now','later','rethink','drop'].forEach(col=>{
     const el=document.getElementById('col-'+col);
     el.querySelectorAll('.card').forEach(c=>c.remove());
-    const colItems=items.filter(i=>i.col===col);
-    document.getElementById('cnt-'+col).textContent=colItems.length;
+    // Bug 1 fix: hide done items from kanban if they're already scheduled in a quarter
+    const colItems=items.filter(i=>i.col===col && !(status[i.id]==='done' && tItems[i.id] && tItems[i.id]!=='pool'));
+    const totalInCol=items.filter(i=>i.col===col).length;
+    const doneHidden=totalInCol-colItems.length;
+    const countEl=document.getElementById('cnt-'+col);
+    countEl.textContent=colItems.length;
+    if(doneHidden>0){
+      countEl.title=`${doneHidden} done item${doneHidden>1?'s':''} hidden — see Impact tracker`;
+      countEl.style.opacity='.7';
+    } else {
+      countEl.title='';
+      countEl.style.opacity='1';
+    }
     document.getElementById('hint-'+col).style.display=colItems.length?'none':'block';
     colItems.forEach(item=>el.appendChild(makeCard(item)));
   });
@@ -1042,56 +1059,58 @@ function renderHolistic() {
   if(empty) return;
 
   const usedTopics=TOPICS.filter(t=>scheduled.some(i=>i.topic===t));
+  const QUARTERS=['q1','q2','q3','q4'];
   const tbl=document.getElementById('hol-matrix');
   tbl.innerHTML='';
+
+  // Quarter header row
   let qHeadHTML='<tr><th style="width:68px;background:var(--bg);border-bottom:0.5px solid var(--border);border-right:1px solid var(--border-strong)"></th>';
-  let lastQ=null;
-  MONTHS.forEach(m=>{
-    if(m.q!==lastQ){
-      const span=MONTHS.filter(x=>x.q===m.q).length;
-      qHeadHTML+=`<td colspan="${span}" style="text-align:center;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);font-weight:500;padding:5px 6px;background:var(--bg);border-bottom:0.5px solid var(--border);border-left:1px solid var(--border-strong)">${Q_LABELS[m.q]}</td>`;
-      lastQ=m.q;
-    }
+  QUARTERS.forEach(q=>{
+    qHeadHTML+=`<td colspan="3" style="text-align:center;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);font-weight:500;padding:5px 6px;background:var(--bg);border-bottom:0.5px solid var(--border);border-left:1px solid var(--border-strong)">${Q_LABELS[q]}</td>`;
   });
   qHeadHTML+='</tr>';
+
+  // Month sub-header row
   let mHeadHTML='<tr><td style="font-size:10px;color:var(--text-muted);padding:5px 10px;background:var(--surface-hover);border-bottom:1px solid var(--border);border-right:1px solid var(--border-strong);font-family:\'DM Mono\',monospace;letter-spacing:.06em;text-transform:uppercase;width:68px">Topic</td>';
-  lastQ=null;
   MONTHS.forEach(m=>{
-    const isFirst=m.q!==lastQ;
+    const isFirst=MONTHS.find(x=>x.q===m.q)===m;
     mHeadHTML+=`<td style="text-align:center;font-size:11px;font-weight:500;color:var(--text-secondary);padding:5px 6px;background:var(--surface-hover);border-bottom:1px solid var(--border);border-right:0.5px solid var(--border);${isFirst?'border-left:1px solid var(--border-strong)':''}">${m.label}</td>`;
-    lastQ=m.q;
   });
   mHeadHTML+='</tr>';
+
+  // Topic rows — chips span full quarter using colspan=3
   let rowsHTML='';
   usedTopics.forEach(topic=>{
     rowsHTML+=`<tr><td class="row-cat">${topicLabels[topic]}</td>`;
-    lastQ=null;
-    MONTHS.forEach(m=>{
-      const isFirst=m.q!==lastQ;
-      const cellItems=scheduled.filter(i=>i.topic===topic&&tItems[i.id]===m.q);
-      const borderLeft=isFirst?'border-left:1px solid var(--border-strong);':'';
-      let cellHTML=`<td class="data-cell" style="${borderLeft}">`;
-      cellItems.forEach(i=>{
-        const isDone=status[i.id]==='done';
-        const firstMonthOfQ=MONTHS.find(x=>x.q===m.q);
-        if(firstMonthOfQ.key===m.key){
-          cellHTML+=`<span class="m-chip m-chip-${topic}${isDone?' done':''}" title="${esc(i.text)}">${esc(i.text)}</span>`;
-        } else {
-          cellHTML+=`<span class="m-dot${isDone?' done':''}" title="${esc(i.text)}"></span>`;
-        }
+    QUARTERS.forEach(q=>{
+      const qItems=scheduled.filter(i=>i.topic===topic&&tItems[i.id]===q);
+      const st = status[qItems[0]?.id]||'planned';
+      let cellHTML=`<td colspan="3" class="data-cell" style="border-left:1px solid var(--border-strong);min-width:180px">`;
+      qItems.forEach(i=>{
+        const st=status[i.id]||'planned';
+        const stLabel=st==='progress'?'In progress':st==='blocked'?'Blocked':st==='done'?'Done':'Planned';
+        const owner=whoLabels[i.who]||i.who;
+        cellHTML+=`<div class="m-chip st-${st}" onclick="openDetailModal('${i.id}')">
+          <span class="m-chip-text">${esc(i.text)}</span>
+          <span class="m-chip-topic">${topicLabels[i.topic]}</span>
+          <div class="m-chip-tt">${esc(i.text)} · ${esc(owner)} · ${stLabel}</div>
+        </div>`;
       });
       cellHTML+='</td>';
       rowsHTML+=cellHTML;
-      lastQ=m.q;
     });
     rowsHTML+='</tr>';
   });
-  tbl.innerHTML=qHeadHTML+mHeadHTML+rowsHTML;
-}
 
-// ── RENDER IMPACT ──
-// ── RATE MANAGER (manager-only) ──
-const MANAGER_PASSWORD = '2148';
+  tbl.innerHTML=qHeadHTML+mHeadHTML+rowsHTML;
+
+  // Wire hover tooltips
+  tbl.querySelectorAll('.m-chip').forEach(chip=>{
+    chip.addEventListener('mouseenter',()=>{ const tt=chip.querySelector('.m-chip-tt'); if(tt) tt.style.opacity='1'; });
+    chip.addEventListener('mouseleave',()=>{ const tt=chip.querySelector('.m-chip-tt'); if(tt) tt.style.opacity='0'; });
+  });
+}
+const MANAGER_PASSWORD = 'yuna91';
 let managerUnlocked = sessionStorage.getItem('manager_unlocked') === 'true';
 
 function toggleRatePanel() {
