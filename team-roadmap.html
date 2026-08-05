@@ -28,7 +28,10 @@
 <!-- TAB BAR -->
 <div class="tab-bar">
   <div class="tab-brand">Customer Intelligence & Technology <span>roadmap</span></div>
-  <button class="tab-btn active" id="tab-build" onclick="switchTab('build')">
+  <button class="tab-btn active" id="tab-today" onclick="switchTab('today')">
+    Today
+  </button>
+  <button class="tab-btn" id="tab-build" onclick="switchTab('build')">
     Building session
     <span class="tab-badge" id="tb-count">0 items</span>
   </button>
@@ -45,8 +48,65 @@
   </div>
 </div>
 
+<!-- ══ PAGE 0: TODAY ══ -->
+<div class="page active" id="page-today">
+  <div class="page-header">
+    <div>
+      <div class="page-eyebrow" id="today-date-label">—</div>
+      <div class="today-greeting" id="today-greeting">Welcome 👋</div>
+      <div class="today-date" id="today-stat-line"></div>
+      <div class="whoami-row" id="whoami-row" style="display:none">
+        <span class="whoami-label">Viewing as:</span>
+        <div id="whoami-chips-header"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="today-whoami-prompt" id="today-whoami-prompt" style="display:none">
+    <div class="today-card" style="text-align:center">
+      <div class="today-card-title">Who's viewing?</div>
+      <div class="today-card-sub">Pick your name — we'll remember it on this device.</div>
+      <div id="whoami-chips-prompt" style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:10px"></div>
+    </div>
+  </div>
+
+  <div id="today-content">
+    <div class="today-card">
+      <div class="today-card-title">Your day-to-day</div>
+      <div class="today-card-sub">Recurring ops work &amp; quick one-offs — separate from the long-term roadmap</div>
+      <div id="today-tasks-list"></div>
+      <div class="today-empty" id="today-tasks-empty" style="display:none">No day-to-day tasks yet — add one below.</div>
+      <div class="task-add-row">
+        <input type="text" id="today-task-input" placeholder="Add a quick task for today..." onkeydown="if(event.key==='Enter')addDayTask()" />
+        <select id="today-recurrence-sel" onchange="onRecurrenceChange()">
+          <option value="once">One-time</option>
+          <option value="weekday">Every weekday</option>
+          <option value="week">Every week</option>
+        </select>
+        <select id="today-weekday-sel" style="display:none">
+          <option value="mon">Every Monday</option>
+          <option value="tue">Every Tuesday</option>
+          <option value="wed">Every Wednesday</option>
+          <option value="thu">Every Thursday</option>
+          <option value="fri" selected>Every Friday</option>
+          <option value="sat">Every Saturday</option>
+          <option value="sun">Every Sunday</option>
+        </select>
+        <button class="btn-add" onclick="addDayTask()">+ Add</button>
+      </div>
+    </div>
+
+    <div class="today-card">
+      <div class="today-card-title">Your roadmap — needs attention</div>
+      <div class="today-card-sub">Sorted by urgency — blocked first, then what's in progress this quarter</div>
+      <div id="today-roadmap-list"></div>
+      <div class="today-empty" id="today-roadmap-empty" style="display:none">Nothing needs your attention right now.</div>
+    </div>
+  </div>
+</div>
+
 <!-- ══ PAGE 1: BUILDING SESSION ══ -->
-<div class="page active" id="page-build">
+<div class="page" id="page-build">
   <div class="page-header">
     <div>
       <div class="page-eyebrow">Customer Intelligence & Technology</div>

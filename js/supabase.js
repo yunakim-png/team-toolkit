@@ -46,7 +46,7 @@ async function dbLoad() {
 }
 
 function getState() {
-  return { items, tItems, status, impact, details, rateCategories, availableTeams };
+  return { items, tItems, status, impact, details, rateCategories, availableTeams, dayTasks };
 }
 
 function applyState(state) {
@@ -58,6 +58,7 @@ function applyState(state) {
   details = state.details || {};
   rateCategories = state.rateCategories || rateCategories;
   availableTeams = state.availableTeams || availableTeams;
+  dayTasks = state.dayTasks || [];
 }
 
 function showSaveStatus(s) {

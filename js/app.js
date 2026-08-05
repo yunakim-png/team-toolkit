@@ -14,6 +14,9 @@ let dragId = null, dragSrc = null, currentWho = 'you';
 let activeDetailId = null;
 let filterWho = new Set(), filterTopic = new Set();
 let holGroupBy = 'topic';
+let dayTasks = [];  // {id, text, who, recurrence:'once'|'weekday'|'week', weekday, lastCompletedAt, createdAt}
+let viewingAs = localStorage.getItem('viewing_as') || null;  // per-browser preference, not synced to Supabase
+const WEEKDAY_LABELS = {mon:'Mon',tue:'Tue',wed:'Wed',thu:'Thu',fri:'Fri',sat:'Sat',sun:'Sun'};
 
 const whoLabels   = {ba:'Jiarui', crm:'Ben Holser', jm:'Jingmin', you:'Yuna'};
 const topicLabels = {cx:'CX', ap:'AP', ps:'PS', logistics:'Logistics', fc:'FC', other:'Other'};
@@ -34,6 +37,7 @@ function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('page-'+tab).classList.add('active');
   document.getElementById('tab-'+tab).classList.add('active');
+  if (tab==='today')  renderToday();
   if (tab==='view')   renderHolistic();
   if (tab==='impact') renderImpact();
 }
@@ -277,6 +281,180 @@ function syncFilterUI() {
   const statusText = filterActive ? `Showing ${totalVisible} of ${items.length}` : '';
   ['filter-status-text','filter-status-text-view'].forEach(id=>{ const el=document.getElementById(id); if(el) el.textContent=statusText; });
   ['filter-clear-btn','filter-clear-btn-view'].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display=filterActive?'inline':'none'; });
+}
+
+// ── TODAY TAB ──
+function isSameLocalDay(d1, d2) { return d1.toDateString() === d2.toDateString(); }
+function startOfWeek(d) {
+  const dt = new Date(d);
+  const day = dt.getDay();
+  const diff = day===0 ? -6 : 1-day; // Monday-anchored
+  dt.setDate(dt.getDate()+diff);
+  dt.setHours(0,0,0,0);
+  return dt;
+}
+function isSameLocalWeek(d1, d2) { return startOfWeek(d1).toDateString() === startOfWeek(d2).toDateString(); }
+
+function isTaskDoneNow(t) {
+  if (!t.lastCompletedAt) return false;
+  const last = new Date(t.lastCompletedAt);
+  const now = new Date();
+  if (t.recurrence==='once')    return true;
+  if (t.recurrence==='weekday') return isSameLocalDay(last, now);
+  if (t.recurrence==='week')    return isSameLocalWeek(last, now);
+  return false;
+}
+
+function dayTaskDueText(t) {
+  if (t.recurrence==='weekday') return { text:'Today', overdue: !isTaskDoneNow(t) };
+  if (t.recurrence==='week')    return { text: WEEKDAY_LABELS[t.weekday]||'', overdue:false };
+  return { text:'—', overdue:false };
+}
+
+function renderWhoamiChips() {
+  const html = Object.keys(whoLabels).map(w=>`<button class="who-btn" data-who="${w}" onclick="setViewingAs('${w}')">${esc(whoLabels[w])}</button>`).join('');
+  ['whoami-chips-header','whoami-chips-prompt'].forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML=html; });
+  document.querySelectorAll('#whoami-chips-header .who-btn, #whoami-chips-prompt .who-btn').forEach(btn=>{
+    btn.classList.toggle('active', btn.dataset.who===viewingAs);
+  });
+}
+
+function setViewingAs(who) {
+  viewingAs = who;
+  localStorage.setItem('viewing_as', who);
+  renderToday();
+}
+
+function onRecurrenceChange() {
+  const val = document.getElementById('today-recurrence-sel').value;
+  document.getElementById('today-weekday-sel').style.display = val==='week' ? 'inline-block' : 'none';
+}
+
+function addDayTask() {
+  if (!viewingAs) return;
+  const inp = document.getElementById('today-task-input');
+  const text = inp.value.trim();
+  if (!text) { inp.focus(); return; }
+  const recurrence = document.getElementById('today-recurrence-sel').value;
+  const weekday = recurrence==='week' ? document.getElementById('today-weekday-sel').value : null;
+  const id = 'd'+Date.now()+Math.floor(Math.random()*9999);
+  dayTasks.push({ id, text, who:viewingAs, recurrence, weekday, lastCompletedAt:null, createdAt:new Date().toISOString() });
+  inp.value='';
+  document.getElementById('today-recurrence-sel').value='once';
+  document.getElementById('today-weekday-sel').style.display='none';
+  inp.focus();
+  renderToday();
+  triggerSave();
+}
+
+function toggleDayTask(id) {
+  const t = dayTasks.find(x=>x.id===id);
+  if (!t) return;
+  t.lastCompletedAt = isTaskDoneNow(t) ? null : new Date().toISOString();
+  renderToday();
+  triggerSave();
+}
+
+function deleteDayTask(id) {
+  const idx = dayTasks.findIndex(t=>t.id===id);
+  if (idx===-1) return;
+  const snapshot = { task: dayTasks[idx], idx };
+  dayTasks = dayTasks.filter(t=>t.id!==id);
+  renderToday();
+  triggerSave();
+  const label = snapshot.task.text.length>28 ? snapshot.task.text.slice(0,28)+'…' : snapshot.task.text;
+  showToast(`Deleted "${label}"`, 'Undo', () => undoDeleteDayTask(snapshot));
+}
+
+function undoDeleteDayTask(snap) {
+  dayTasks.splice(Math.min(snap.idx, dayTasks.length), 0, snap.task);
+  renderToday();
+  triggerSave();
+  showToast('Restored');
+}
+
+function renderToday() {
+  renderWhoamiChips();
+
+  const now = new Date();
+  document.getElementById('today-date-label').textContent = now.toLocaleDateString('en-US',{weekday:'long', month:'long', day:'numeric'});
+  document.getElementById('whoami-row').style.display = viewingAs ? 'flex' : 'none';
+  document.getElementById('today-whoami-prompt').style.display = viewingAs ? 'none' : 'block';
+  document.getElementById('today-content').style.display = viewingAs ? 'block' : 'none';
+
+  if (!viewingAs) {
+    document.getElementById('today-greeting').textContent = 'Welcome 👋';
+    document.getElementById('today-stat-line').textContent = '';
+    return;
+  }
+
+  const myTasks = dayTasks.filter(t=>t.who===viewingAs);
+  const openTasks = myTasks.filter(t=>!isTaskDoneNow(t));
+  const overdueTasks = myTasks.filter(t=>t.recurrence==='weekday' && !isTaskDoneNow(t));
+  const myAttention = items.filter(i=>i.who===viewingAs && tItems[i.id] && tItems[i.id]!=='pool' && status[i.id]!=='done');
+  const blockedCount = myAttention.filter(i=>status[i.id]==='blocked').length;
+
+  document.getElementById('today-greeting').textContent = `Good morning, ${whoLabels[viewingAs]||viewingAs} 👋`;
+  const parts=[`${openTasks.length} open today`];
+  if (overdueTasks.length) parts.push(`${overdueTasks.length} overdue`);
+  if (blockedCount) parts.push(`${blockedCount} roadmap item${blockedCount>1?'s':''} blocked`);
+  document.getElementById('today-stat-line').textContent = parts.join(' · ');
+
+  // day-to-day list, grouped by recurrence
+  const listEl = document.getElementById('today-tasks-list');
+  const tasksEmptyEl = document.getElementById('today-tasks-empty');
+  listEl.innerHTML='';
+  if (myTasks.length===0) {
+    tasksEmptyEl.style.display='block';
+  } else {
+    tasksEmptyEl.style.display='none';
+    const groups = [
+      {key:'weekday', label:'Daily',   cls:'daily'},
+      {key:'week',    label:'Weekly',  cls:'weekly'},
+      {key:'once',    label:'Ad hoc',  cls:'adhoc'},
+    ];
+    groups.forEach(g=>{
+      const groupTasks = myTasks.filter(t=>t.recurrence===g.key);
+      if (!groupTasks.length) return;
+      const groupEl = document.createElement('div');
+      groupEl.className='task-group';
+      groupEl.innerHTML = `<div class="task-group-label ${g.cls}">${g.label}</div>`;
+      groupTasks.forEach(t=>{
+        const done = isTaskDoneNow(t);
+        const due = dayTaskDueText(t);
+        const row = document.createElement('div');
+        row.className = 'task-row'+(done?' done':'');
+        row.innerHTML = `
+          <div class="task-check${done?' checked':''}" onclick="toggleDayTask('${t.id}')">${done?'✓':''}</div>
+          <span class="task-text">${esc(t.text)}</span>
+          <span class="task-due${due.overdue?' overdue':''}">${due.text}</span>
+          <button class="card-del" onclick="deleteDayTask('${t.id}')" title="Remove">✕</button>`;
+        groupEl.appendChild(row);
+      });
+      listEl.appendChild(groupEl);
+    });
+  }
+
+  // roadmap items needing attention — blocked first, then in-progress, then planned
+  const roadmapListEl = document.getElementById('today-roadmap-list');
+  const roadmapEmptyEl = document.getElementById('today-roadmap-empty');
+  const order = {blocked:0, progress:1, planned:2};
+  const sorted = [...myAttention].sort((a,b)=>(order[status[a.id]||'planned']??2)-(order[status[b.id]||'planned']??2));
+  roadmapListEl.innerHTML='';
+  if (sorted.length===0) {
+    roadmapEmptyEl.style.display='block';
+  } else {
+    roadmapEmptyEl.style.display='none';
+    sorted.forEach(i=>{
+      const st = status[i.id]||'planned';
+      const stLabel = st==='progress'?'In progress':st==='blocked'?'Blocked':st==='done'?'Done':'Planned';
+      const row = document.createElement('div');
+      row.className = 'mini-row st-'+st;
+      row.addEventListener('click', ()=>openDetailModal(i.id));
+      row.innerHTML = `<span class="mini-status">${stLabel}</span><span class="mini-text">${esc(i.text)}</span><span class="mini-meta">${topicLabels[i.topic]} · ${(qLabels[tItems[i.id]]||'').split(' ')[0]}</span>`;
+      roadmapListEl.appendChild(row);
+    });
+  }
 }
 
 // ── RENDER (build tab) ──
@@ -944,6 +1122,7 @@ async function init() {
     document.getElementById('save-status').textContent = '';
   }
   render();
+  renderToday();
 }
 
 // ── PASSWORD GATE ──
@@ -975,6 +1154,7 @@ function startApp() {
     init();
   } else {
     render();
+    renderToday();
     console.warn('Supabase not configured — running without persistence. Fill in SUPABASE_URL and SUPABASE_ANON_KEY.');
   }
   renderRateCategories();
