@@ -10,10 +10,11 @@ let rateCategories = [
   { id:'r3', name:'My team', rate:50 },
 ];
 let availableTeams = ['CX','Ops','Sales','Finance','Leadership','Data','Tech'];
-let dragId = null, dragSrc = null, currentWho = 'all';
+let dragId = null, dragSrc = null, currentWho = 'you';
 let activeDetailId = null;
+let filterWho = new Set(), filterTopic = new Set();
 
-const whoLabels   = {ba:'Jiarui', crm:'Ben Holser', jm:'Jingmin', manager:'Yuna'};
+const whoLabels   = {ba:'Jiarui', crm:'Ben Holser', jm:'Jingmin', you:'Yuna'};
 const topicLabels = {cx:'CX', ap:'AP', ps:'PS', logistics:'Logistics', fc:'FC', other:'Other'};
 const colLabels   = {now:'Keep & prioritise', later:'Backlog', rethink:'Rethink', drop:'Abandon'};
 const qLabels     = {q1:'Q1 (Apr–Jun)', q2:'Q2 (Jul–Sep)', q3:'Q3 (Oct–Dec)', q4:'Q4 (Jan–Mar)'};
@@ -51,7 +52,8 @@ function addItem() {
   if (!text) { inp.focus(); return; }
   const id = 'i'+Date.now()+Math.floor(Math.random()*9999);
   const now = new Date().toISOString();
-  items.push({id, text, topic, who: currentWho, col:'now'});
+  const who = whoLabels[currentWho] ? currentWho : 'you';
+  items.push({id, text, topic, who, col:'now'});
   tItems[id] = 'pool';
   status[id] = 'planned';
   details[id] = { deliverables:[], tags:[], notes:'', addedAt: now, updatedAt: now };
@@ -61,7 +63,29 @@ function addItem() {
 }
 document.getElementById('item-input').addEventListener('keydown', e => { if(e.key==='Enter') addItem(); });
 
-function delItem(id)  { items=items.filter(i=>i.id!==id); delete tItems[id]; delete status[id]; delete impact[id]; delete details[id]; render(); triggerSave(); }
+function delItem(id) {
+  const idx = items.findIndex(i=>i.id===id);
+  if (idx===-1) return;
+  const snapshot = { item: items[idx], idx, tItem: tItems[id], status: status[id], impact: impact[id], details: details[id] };
+  items = items.filter(i=>i.id!==id);
+  delete tItems[id]; delete status[id]; delete impact[id]; delete details[id];
+  render();
+  triggerSave();
+  const label = snapshot.item.text.length>28 ? snapshot.item.text.slice(0,28)+'…' : snapshot.item.text;
+  showToast(`Deleted "${label}"`, 'Undo', () => undoDelete(snapshot));
+}
+
+function undoDelete(snap) {
+  items.splice(Math.min(snap.idx, items.length), 0, snap.item);
+  if (snap.tItem   !== undefined) tItems[snap.item.id]  = snap.tItem;
+  if (snap.status  !== undefined) status[snap.item.id]  = snap.status;
+  if (snap.impact  !== undefined) impact[snap.item.id]  = snap.impact;
+  if (snap.details !== undefined) details[snap.item.id] = snap.details;
+  render();
+  triggerSave();
+  showToast('Restored');
+}
+
 function delTItem(id) { delete tItems[id]; status[id]='planned'; render(); triggerSave(); }
 
 // ── STATUS CYCLE ──
@@ -76,7 +100,10 @@ function cycleStatus(id, newStatus) {
 // ── DRAG ──
 function allowDrop(e) { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
 function dragLeave(e) { if(!e.currentTarget.contains(e.relatedTarget)) e.currentTarget.classList.remove('drag-over'); }
-function clearDO()    { document.querySelectorAll('.col,.quarter,.pool-cards').forEach(el=>el.classList.remove('drag-over')); }
+function clearDO() {
+  document.querySelectorAll('.col,.quarter,.pool-cards').forEach(el=>el.classList.remove('drag-over'));
+  document.querySelectorAll('.card').forEach(el=>el.classList.remove('drop-above','drop-below'));
+}
 
 function kDragStart(e,id) {
   dragId=id; dragSrc='kanban'; e.dataTransfer.effectAllowed='move';
@@ -94,7 +121,40 @@ function dropKanban(e,col) {
   item.col=col;
   if(col==='now'&&!tItems[dragId]) tItems[dragId]='pool';
   if(col!=='now') { delete tItems[dragId]; status[dragId]='planned'; }
-  dragId=null; dragSrc=null; render();
+  dragId=null; dragSrc=null; render(); triggerSave();
+}
+
+// Within/across-column reordering: dropping directly on a card inserts
+// before/after it (based on cursor position) instead of appending at the end.
+function cardDragOver(e, targetId) {
+  if (!dragId || dragSrc!=='kanban' || dragId===targetId) return;
+  e.preventDefault(); e.stopPropagation();
+  const rect = e.currentTarget.getBoundingClientRect();
+  const before = (e.clientY - rect.top) < rect.height/2;
+  e.currentTarget.classList.toggle('drop-above', before);
+  e.currentTarget.classList.toggle('drop-below', !before);
+}
+function cardDragLeave(e) {
+  e.stopPropagation();
+  e.currentTarget.classList.remove('drop-above','drop-below');
+}
+function cardDrop(e, targetId) {
+  e.preventDefault(); e.stopPropagation();
+  const before = e.currentTarget.classList.contains('drop-above');
+  e.currentTarget.classList.remove('drop-above','drop-below');
+  if (!dragId || dragSrc!=='kanban' || dragId===targetId) return;
+  const targetItem = items.find(i=>i.id===targetId);
+  const draggedIdx = items.findIndex(i=>i.id===dragId);
+  if (!targetItem || draggedIdx===-1) return;
+  const dragged = items[draggedIdx];
+  items.splice(draggedIdx,1);
+  const targetIdx = items.findIndex(i=>i.id===targetId);
+  items.splice(before?targetIdx:targetIdx+1, 0, dragged);
+  dragged.col = targetItem.col;
+  if (dragged.col==='now' && !tItems[dragged.id]) tItems[dragged.id]='pool';
+  if (dragged.col!=='now') { delete tItems[dragged.id]; status[dragged.id]='planned'; }
+  dragId=null; dragSrc=null;
+  render(); triggerSave();
 }
 function tDragStart(e,id) {
   dragId=id; dragSrc='timeline'; e.dataTransfer.effectAllowed='move';
@@ -128,6 +188,9 @@ function makeCard(item) {
   d.className='card'; d.draggable=true; d.dataset.id=item.id;
   d.addEventListener('dragstart',e=>kDragStart(e,item.id));
   d.addEventListener('dragend',()=>kDragEnd(item.id));
+  d.addEventListener('dragover',e=>cardDragOver(e,item.id));
+  d.addEventListener('dragleave',e=>cardDragLeave(e));
+  d.addEventListener('drop',e=>cardDrop(e,item.id));
   d.addEventListener('click',e=>{ if(e.target.closest('.card-del')) return; openDetailModal(item.id); });
   const hasDetail = details[item.id] && ((details[item.id].deliverables&&details[item.id].deliverables.length) || (details[item.id].tags&&details[item.id].tags.length));
   d.innerHTML=`<div class="card-top"><span class="card-text">${esc(item.text)}</span><button class="card-del" onclick="delItem('${item.id}')" title="Remove">✕</button></div><div class="card-meta"><span class="badge badge-who-${item.who}">${whoLabels[item.who]}</span><span class="badge badge-topic-${item.topic}">${topicLabels[item.topic]}</span></div>${hasDetail?'<div class="card-expand-hint">Has details — click to view</div>':'<div class="card-expand-hint">Click to add details</div>'}`;
@@ -172,15 +235,44 @@ function makePoolChip(item) {
   return d;
 }
 
+// ── FILTER BAR (view-only — does not affect stats or saved data) ──
+function renderFilterBar() {
+  document.getElementById('filter-owner-chips').innerHTML =
+    Object.keys(whoLabels).map(w=>`<button class="filter-chip" data-dim="who" data-val="${w}" onclick="toggleFilterChip(this)">${esc(whoLabels[w])}</button>`).join('');
+  document.getElementById('filter-topic-chips').innerHTML =
+    TOPICS.map(t=>`<button class="filter-chip" data-dim="topic" data-val="${t}" onclick="toggleFilterChip(this)">${esc(topicLabels[t])}</button>`).join('');
+}
+
+function toggleFilterChip(btn) {
+  const set = btn.dataset.dim==='who' ? filterWho : filterTopic;
+  const val = btn.dataset.val;
+  if (set.has(val)) { set.delete(val); btn.classList.remove('active'); }
+  else { set.add(val); btn.classList.add('active'); }
+  render();
+}
+
+function clearFilters() {
+  filterWho.clear(); filterTopic.clear();
+  document.querySelectorAll('.filter-chip.active').forEach(b=>b.classList.remove('active'));
+  render();
+}
+
+function itemPassesFilter(item) {
+  const okWho   = filterWho.size===0   || filterWho.has(item.who);
+  const okTopic = filterTopic.size===0 || filterTopic.has(item.topic);
+  return okWho && okTopic;
+}
+
 // ── RENDER (build tab) ──
 function render() {
   ['now','later','rethink','drop'].forEach(col=>{
     const el=document.getElementById('col-'+col);
     el.querySelectorAll('.card').forEach(c=>c.remove());
     // Bug 1 fix: hide done items from kanban if they're already scheduled in a quarter
-    const colItems=items.filter(i=>i.col===col && !(status[i.id]==='done' && tItems[i.id] && tItems[i.id]!=='pool'));
+    const colItemsAll=items.filter(i=>i.col===col && !(status[i.id]==='done' && tItems[i.id] && tItems[i.id]!=='pool'));
     const totalInCol=items.filter(i=>i.col===col).length;
-    const doneHidden=totalInCol-colItems.length;
+    const doneHidden=totalInCol-colItemsAll.length;
+    const colItems=colItemsAll.filter(itemPassesFilter);
     const countEl=document.getElementById('cnt-'+col);
     countEl.textContent=colItems.length;
     if(doneHidden>0){
@@ -195,18 +287,19 @@ function render() {
   });
 
   const keepItems=items.filter(i=>i.col==='now');
-  const poolItems=keepItems.filter(i=>tItems[i.id]==='pool');
+  const keepItemsView=keepItems.filter(itemPassesFilter);
+  const poolItems=keepItemsView.filter(i=>tItems[i.id]==='pool');
   const poolEl=document.getElementById('pool-cards');
   poolEl.querySelectorAll('.pool-card').forEach(c=>c.remove());
   document.getElementById('pool-empty').style.display=poolItems.length?'none':'block';
   document.getElementById('pool-hint-txt').textContent=
-    poolItems.length ? poolItems.length+' unscheduled' : (keepItems.length?'all scheduled!':'add & prioritise items first');
+    poolItems.length ? poolItems.length+' unscheduled' : (keepItemsView.length?'all scheduled!':'add & prioritise items first');
   poolItems.forEach(item=>poolEl.appendChild(makePoolChip(item)));
 
   ['q1','q2','q3','q4'].forEach(q=>{
     const el=document.getElementById('q-'+q);
     el.querySelectorAll('.t-card').forEach(c=>c.remove());
-    const qItems=keepItems.filter(i=>tItems[i.id]===q);
+    const qItems=keepItemsView.filter(i=>tItems[i.id]===q);
     document.getElementById('qe-'+q).style.display=qItems.length?'none':'block';
     qItems.forEach(item=>el.appendChild(makeTCard(item)));
   });
@@ -218,6 +311,19 @@ function render() {
   document.getElementById('st-sched').textContent=scheduled;
   document.getElementById('st-done').textContent=doneCount;
   updateTabBadges();
+
+  const filterActive = filterWho.size>0 || filterTopic.size>0;
+  const statusEl = document.getElementById('filter-status-text');
+  const clearBtn = document.getElementById('filter-clear-btn');
+  if (statusEl && clearBtn) {
+    if (filterActive) {
+      statusEl.textContent = `Showing ${items.filter(itemPassesFilter).length} of ${items.length}`;
+      clearBtn.style.display='inline';
+    } else {
+      statusEl.textContent = '';
+      clearBtn.style.display='none';
+    }
+  }
 }
 
 function updateTabBadges() {
@@ -554,7 +660,7 @@ function openDetailModal(id) {
   if (!status[id]) status[id] = 'planned';
   if (!d.ownerHistory) d.ownerHistory = [];
 
-  document.getElementById('dm-title').textContent = item.text;
+  document.getElementById('dm-title').value = item.text;
   document.getElementById('dm-added').textContent = formatDate(d.addedAt);
   document.getElementById('dm-updated').textContent = formatDate(d.updatedAt);
   document.getElementById('dm-owner').value = item.who;
@@ -565,6 +671,18 @@ function openDetailModal(id) {
   renderTeamChips();
   renderDeliverables();
   document.getElementById('detail-modal').classList.add('open');
+}
+
+function renameItemFromModal() {
+  if (!activeDetailId) return;
+  const item = items.find(i=>i.id===activeDetailId);
+  if (!item) return;
+  const input = document.getElementById('dm-title');
+  const val = input.value.trim();
+  if (!val) { input.value = item.text; return; }
+  if (val === item.text) return;
+  item.text = val;
+  saveDetailModal();
 }
 
 function renderOwnerHistory() {
@@ -759,7 +877,21 @@ function openExport() {
 function closeModal(){ document.getElementById('modal').classList.remove('open'); }
 function copyExport(){ navigator.clipboard.writeText(document.getElementById('export-text').value).then(()=>showToast('Copied!')); }
 document.getElementById('modal').addEventListener('click',e=>{ if(e.target===e.currentTarget) closeModal(); });
-function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200); }
+let toastTimer = null;
+function showToast(msg, actionLabel, actionFn) {
+  const t = document.getElementById('toast');
+  clearTimeout(toastTimer);
+  if (actionLabel && actionFn) {
+    t.innerHTML = `<span>${esc(msg)}</span><button class="toast-action" id="toast-action-btn">${esc(actionLabel)}</button>`;
+    document.getElementById('toast-action-btn').onclick = () => { t.classList.remove('show'); actionFn(); };
+    t.classList.add('show');
+    toastTimer = setTimeout(()=>t.classList.remove('show'), 5000);
+  } else {
+    t.textContent = msg;
+    t.classList.add('show');
+    toastTimer = setTimeout(()=>t.classList.remove('show'), 2200);
+  }
+}
 
 // ── STARTUP: load from Supabase ──
 async function init() {
@@ -799,6 +931,7 @@ function unlockApp() {
 }
 
 function startApp() {
+  renderFilterBar();
   // Only init with Supabase if config is filled in
   if (SUPABASE_URL !== 'PASTE_YOUR_SUPABASE_URL_HERE') {
     init();

@@ -78,10 +78,25 @@
     </div>
     <div class="who-section">
       <span class="who-label">Owner:</span>
-      <button class="who-btn" data-who="you" onclick="setWho(this)">Yuna</button>
+      <button class="who-btn active" data-who="you" onclick="setWho(this)">Yuna</button>
       <button class="who-btn" data-who="ba" onclick="setWho(this)">Jiarui</button>
       <button class="who-btn" data-who="crm" onclick="setWho(this)">Ben Holser</button>
       <button class="who-btn" data-who="jm" onclick="setWho(this)">Jingmin</button>
+    </div>
+  </div>
+
+  <div class="filter-bar" id="filter-bar">
+    <div class="filter-group">
+      <span class="filter-group-label">Owner</span>
+      <div class="filter-chips" id="filter-owner-chips"></div>
+    </div>
+    <div class="filter-group">
+      <span class="filter-group-label">Topic</span>
+      <div class="filter-chips" id="filter-topic-chips"></div>
+    </div>
+    <div class="filter-status">
+      <span id="filter-status-text"></span>
+      <button class="filter-clear-btn" id="filter-clear-btn" onclick="clearFilters()" style="display:none">Clear filters</button>
     </div>
   </div>
 
@@ -293,8 +308,8 @@
 <div class="detail-modal-bg" id="detail-modal">
   <div class="detail-modal">
     <div class="dm-header">
-      <div>
-        <div class="dm-title" id="dm-title">Initiative name</div>
+      <div style="flex:1">
+        <input class="dm-title-input" id="dm-title" onchange="renameItemFromModal()" />
         <div class="dm-meta">
           <span>Added <span id="dm-added">—</span></span>
           <span>Updated <span id="dm-updated">—</span></span>
