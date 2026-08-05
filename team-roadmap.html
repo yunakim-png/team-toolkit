@@ -213,6 +213,28 @@
     <div class="sum-card"><div class="sum-num" id="hol-drop">0</div><div class="sum-label">Abandoned</div></div>
   </div>
 
+  <div class="filter-bar" id="filter-bar-view">
+    <div class="filter-group">
+      <span class="filter-group-label">Owner</span>
+      <div class="filter-chips" id="filter-owner-chips-view"></div>
+    </div>
+    <div class="filter-group">
+      <span class="filter-group-label">Topic</span>
+      <div class="filter-chips" id="filter-topic-chips-view"></div>
+    </div>
+    <div class="filter-group" style="margin-left:auto">
+      <span class="filter-group-label">Group by</span>
+      <div class="groupby-toggle" id="hol-groupby-toggle">
+        <button class="groupby-btn active" data-group="topic" onclick="setHolGroupBy(this)">Topic</button>
+        <button class="groupby-btn" data-group="owner" onclick="setHolGroupBy(this)">Owner</button>
+      </div>
+    </div>
+    <div class="filter-status">
+      <span id="filter-status-text-view"></span>
+      <button class="filter-clear-btn" id="filter-clear-btn-view" onclick="clearFilters()" style="display:none">Clear filters</button>
+    </div>
+  </div>
+
   <div class="legend" id="hol-legend">
     <span style="font-size:11px;font-weight:500;color:var(--text-secondary);margin-right:4px">Status:</span>
     <div class="legend-item"><span style="font-size:10px;padding:3px 10px;border-radius:20px;background:#F1EFE8;color:#4A4840">Planned</span></div>
@@ -226,9 +248,10 @@
     <div class="matrix-scroll"><table class="mtx" id="hol-matrix"></table></div>
   </div>
   <div class="hol-empty" id="hol-empty" style="display:none">
-    <div class="hol-empty-title">Nothing scheduled yet</div>
-    <div class="hol-empty-sub">Go back to the building session, sort initiatives into "Keep &amp; prioritise" then drag them into quarters.</div>
-    <button class="btn-secondary" style="margin:1.5rem auto 0;display:inline-flex" onclick="switchTab('build')">← Back to builder</button>
+    <div class="hol-empty-title" id="hol-empty-title">Nothing scheduled yet</div>
+    <div class="hol-empty-sub" id="hol-empty-sub">Go back to the building session, sort initiatives into "Keep &amp; prioritise" then drag them into quarters.</div>
+    <button class="btn-secondary" id="hol-empty-build-btn" style="margin:1.5rem auto 0;display:inline-flex" onclick="switchTab('build')">← Back to builder</button>
+    <button class="btn-secondary" id="hol-empty-clear-btn" style="margin:1.5rem auto 0;display:none" onclick="clearFilters()">Clear filters</button>
   </div>
 </div>
 

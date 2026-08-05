@@ -13,6 +13,7 @@ let availableTeams = ['CX','Ops','Sales','Finance','Leadership','Data','Tech'];
 let dragId = null, dragSrc = null, currentWho = 'you';
 let activeDetailId = null;
 let filterWho = new Set(), filterTopic = new Set();
+let holGroupBy = 'topic';
 
 const whoLabels   = {ba:'Jiarui', crm:'Ben Holser', jm:'Jingmin', you:'Yuna'};
 const topicLabels = {cx:'CX', ap:'AP', ps:'PS', logistics:'Logistics', fc:'FC', other:'Other'};
@@ -235,32 +236,47 @@ function makePoolChip(item) {
   return d;
 }
 
-// ── FILTER BAR (view-only — does not affect stats or saved data) ──
+// ── FILTER BAR (shared across Build + Holistic tabs — view-only, does not affect stats or saved data) ──
 function renderFilterBar() {
-  document.getElementById('filter-owner-chips').innerHTML =
-    Object.keys(whoLabels).map(w=>`<button class="filter-chip" data-dim="who" data-val="${w}" onclick="toggleFilterChip(this)">${esc(whoLabels[w])}</button>`).join('');
-  document.getElementById('filter-topic-chips').innerHTML =
-    TOPICS.map(t=>`<button class="filter-chip" data-dim="topic" data-val="${t}" onclick="toggleFilterChip(this)">${esc(topicLabels[t])}</button>`).join('');
+  const ownerHTML = Object.keys(whoLabels).map(w=>`<button class="filter-chip" data-dim="who" data-val="${w}" onclick="toggleFilterChip(this)">${esc(whoLabels[w])}</button>`).join('');
+  const topicHTML = TOPICS.map(t=>`<button class="filter-chip" data-dim="topic" data-val="${t}" onclick="toggleFilterChip(this)">${esc(topicLabels[t])}</button>`).join('');
+  ['filter-owner-chips','filter-owner-chips-view'].forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML=ownerHTML; });
+  ['filter-topic-chips','filter-topic-chips-view'].forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML=topicHTML; });
 }
 
 function toggleFilterChip(btn) {
   const set = btn.dataset.dim==='who' ? filterWho : filterTopic;
   const val = btn.dataset.val;
-  if (set.has(val)) { set.delete(val); btn.classList.remove('active'); }
-  else { set.add(val); btn.classList.add('active'); }
+  if (set.has(val)) set.delete(val); else set.add(val);
   render();
+  renderHolistic();
+  syncFilterUI();
 }
 
 function clearFilters() {
   filterWho.clear(); filterTopic.clear();
-  document.querySelectorAll('.filter-chip.active').forEach(b=>b.classList.remove('active'));
   render();
+  renderHolistic();
+  syncFilterUI();
 }
 
 function itemPassesFilter(item) {
   const okWho   = filterWho.size===0   || filterWho.has(item.who);
   const okTopic = filterTopic.size===0 || filterTopic.has(item.topic);
   return okWho && okTopic;
+}
+
+// Keeps chip active-states + "Showing X of Y" text in sync across both tabs' copies of the filter bar.
+function syncFilterUI() {
+  document.querySelectorAll('.filter-chip').forEach(btn=>{
+    const set = btn.dataset.dim==='who' ? filterWho : filterTopic;
+    btn.classList.toggle('active', set.has(btn.dataset.val));
+  });
+  const filterActive = filterWho.size>0 || filterTopic.size>0;
+  const totalVisible = items.filter(itemPassesFilter).length;
+  const statusText = filterActive ? `Showing ${totalVisible} of ${items.length}` : '';
+  ['filter-status-text','filter-status-text-view'].forEach(id=>{ const el=document.getElementById(id); if(el) el.textContent=statusText; });
+  ['filter-clear-btn','filter-clear-btn-view'].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display=filterActive?'inline':'none'; });
 }
 
 // ── RENDER (build tab) ──
@@ -311,19 +327,7 @@ function render() {
   document.getElementById('st-sched').textContent=scheduled;
   document.getElementById('st-done').textContent=doneCount;
   updateTabBadges();
-
-  const filterActive = filterWho.size>0 || filterTopic.size>0;
-  const statusEl = document.getElementById('filter-status-text');
-  const clearBtn = document.getElementById('filter-clear-btn');
-  if (statusEl && clearBtn) {
-    if (filterActive) {
-      statusEl.textContent = `Showing ${items.filter(itemPassesFilter).length} of ${items.length}`;
-      clearBtn.style.display='inline';
-    } else {
-      statusEl.textContent = '';
-      clearBtn.style.display='none';
-    }
-  }
+  syncFilterUI();
 }
 
 function updateTabBadges() {
@@ -340,23 +344,53 @@ function updateTabBadges() {
 }
 
 // ── RENDER HOLISTIC ──
+function setHolGroupBy(btn) {
+  holGroupBy = btn.dataset.group;
+  document.querySelectorAll('#hol-groupby-toggle .groupby-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderHolistic();
+}
+
+function toggleCellOverflow(btn) {
+  const cell = btn.closest('.data-cell');
+  const hidden = cell.querySelectorAll('.m-chip-overflow');
+  const willExpand = hidden.length>0 && hidden[0].style.display!=='block';
+  hidden.forEach(c=>c.style.display = willExpand ? 'block' : '');
+  btn.textContent = willExpand ? 'Show less' : `+${hidden.length} more`;
+}
+
 function renderHolistic() {
   const keepItems=items.filter(i=>i.col==='now');
-  const scheduled=keepItems.filter(i=>tItems[i.id]&&tItems[i.id]!=='pool');
-  const doneCount=scheduled.filter(i=>status[i.id]==='done').length;
+  const scheduledAll=keepItems.filter(i=>tItems[i.id]&&tItems[i.id]!=='pool');
+  const scheduled=scheduledAll.filter(itemPassesFilter);
+  const doneCount=scheduledAll.filter(i=>status[i.id]==='done').length;
   document.getElementById('hol-total').textContent=items.length;
-  document.getElementById('hol-sched').textContent=scheduled.length;
+  document.getElementById('hol-sched').textContent=scheduledAll.length;
   document.getElementById('hol-done').textContent=doneCount;
   document.getElementById('hol-drop').textContent=items.filter(i=>i.col==='drop').length;
   const d=new Date();
-  document.getElementById('hol-meta-txt').textContent='Generated '+d.toLocaleDateString('en-CA',{month:'long',day:'numeric',year:'numeric'});
-  const empty=scheduled.length===0;
+  document.getElementById('hol-meta-txt').textContent='Live — updated '+d.toLocaleDateString('en-CA',{month:'long',day:'numeric',year:'numeric'});
+
+  const trueEmpty=scheduledAll.length===0;
+  const filteredEmpty=!trueEmpty && scheduled.length===0;
+  const empty=trueEmpty||filteredEmpty;
   document.getElementById('hol-empty').style.display=empty?'block':'none';
   document.getElementById('hol-matrix-wrap').style.display=empty?'none':'block';
   document.getElementById('hol-legend').style.display=empty?'none':'flex';
+  document.getElementById('hol-empty-title').textContent = filteredEmpty ? 'No items match this filter' : 'Nothing scheduled yet';
+  document.getElementById('hol-empty-sub').textContent = filteredEmpty
+    ? 'Try a different owner or topic, or clear the filter to see everything scheduled.'
+    : 'Go back to the building session, sort initiatives into "Keep & prioritise" then drag them into quarters.';
+  document.getElementById('hol-empty-build-btn').style.display = filteredEmpty ? 'none' : 'inline-flex';
+  document.getElementById('hol-empty-clear-btn').style.display = filteredEmpty ? 'inline-flex' : 'none';
   if(empty) return;
 
-  const usedTopics=TOPICS.filter(t=>scheduled.some(i=>i.topic===t));
+  const groupKeys = holGroupBy==='owner'
+    ? Object.keys(whoLabels).filter(w=>scheduled.some(i=>i.who===w))
+    : TOPICS.filter(t=>scheduled.some(i=>i.topic===t));
+  const groupLabel = k => holGroupBy==='owner' ? whoLabels[k] : topicLabels[k];
+  const inGroup = (i,k) => holGroupBy==='owner' ? i.who===k : i.topic===k;
+
   const QUARTERS=['q1','q2','q3','q4'];
   const tbl=document.getElementById('hol-matrix');
   tbl.innerHTML='';
@@ -369,31 +403,35 @@ function renderHolistic() {
   qHeadHTML+='</tr>';
 
   // Month sub-header row
-  let mHeadHTML='<tr><td style="font-size:10px;color:var(--text-muted);padding:5px 10px;background:var(--surface-hover);border-bottom:1px solid var(--border);border-right:1px solid var(--border-strong);font-family:\'DM Mono\',monospace;letter-spacing:.06em;text-transform:uppercase;width:68px">Topic</td>';
+  let mHeadHTML=`<tr><td style="font-size:10px;color:var(--text-muted);padding:5px 10px;background:var(--surface-hover);border-bottom:1px solid var(--border);border-right:1px solid var(--border-strong);font-family:'DM Mono',monospace;letter-spacing:.06em;text-transform:uppercase;width:68px">${holGroupBy==='owner'?'Owner':'Topic'}</td>`;
   MONTHS.forEach(m=>{
     const isFirst=MONTHS.find(x=>x.q===m.q)===m;
     mHeadHTML+=`<td style="text-align:center;font-size:11px;font-weight:500;color:var(--text-secondary);padding:5px 6px;background:var(--surface-hover);border-bottom:1px solid var(--border);border-right:0.5px solid var(--border);${isFirst?'border-left:1px solid var(--border-strong)':''}">${m.label}</td>`;
   });
   mHeadHTML+='</tr>';
 
-  // Topic rows — chips span full quarter using colspan=3
+  // Group rows — chips span full quarter using colspan=3 (placement is quarter-level, not month-level)
   let rowsHTML='';
-  usedTopics.forEach(topic=>{
-    rowsHTML+=`<tr><td class="row-cat">${topicLabels[topic]}</td>`;
+  const MAX_VISIBLE=4;
+  groupKeys.forEach(key=>{
+    rowsHTML+=`<tr><td class="row-cat">${esc(groupLabel(key))}</td>`;
     QUARTERS.forEach(q=>{
-      const qItems=scheduled.filter(i=>i.topic===topic&&tItems[i.id]===q);
-      const st = status[qItems[0]?.id]||'planned';
+      const qItems=scheduled.filter(i=>inGroup(i,key)&&tItems[i.id]===q);
       let cellHTML=`<td colspan="3" class="data-cell" style="border-left:1px solid var(--border-strong);min-width:180px">`;
-      qItems.forEach(i=>{
+      qItems.forEach((i,idx)=>{
         const st=status[i.id]||'planned';
         const stLabel=st==='progress'?'In progress':st==='blocked'?'Blocked':st==='done'?'Done':'Planned';
         const owner=whoLabels[i.who]||i.who;
-        cellHTML+=`<div class="m-chip st-${st}" onclick="openDetailModal('${i.id}')">
+        const overflowClass = idx>=MAX_VISIBLE ? ' m-chip-overflow' : '';
+        cellHTML+=`<div class="m-chip st-${st}${overflowClass}" onclick="openDetailModal('${i.id}')">
           <span class="m-chip-text">${esc(i.text)}</span>
           <span class="m-chip-topic">${topicLabels[i.topic]}</span>
           <div class="m-chip-tt">${esc(i.text)} · ${esc(owner)} · ${stLabel}</div>
         </div>`;
       });
+      if (qItems.length>MAX_VISIBLE) {
+        cellHTML+=`<button class="m-chip-more" onclick="toggleCellOverflow(this)">+${qItems.length-MAX_VISIBLE} more</button>`;
+      }
       cellHTML+='</td>';
       rowsHTML+=cellHTML;
     });

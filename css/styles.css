@@ -96,6 +96,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-prim
 .filter-chip[data-val="other"].active{background:var(--badge-other);color:var(--badge-other-t);border-color:transparent;font-weight:500}
 .filter-status{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:11px;color:var(--text-muted);font-family:'DM Mono',monospace}
 .filter-clear-btn{font-family:'DM Sans',sans-serif;font-size:11px;color:var(--col-drop);background:none;border:none;cursor:pointer;text-decoration:underline}
+.groupby-toggle{display:inline-flex;border:1px solid var(--border-strong);border-radius:16px;overflow:hidden}
+.groupby-btn{font-family:'DM Sans',sans-serif;font-size:11px;padding:4px 12px;border:none;background:transparent;color:var(--text-secondary);cursor:pointer;transition:all .15s}
+.groupby-btn.active{background:var(--text-primary);color:#fff;font-weight:500}
+.groupby-btn:not(.active):hover{background:var(--surface-hover)}
+.m-chip-more{display:block;width:100%;text-align:left;font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);background:none;border:none;cursor:pointer;padding:3px 4px;text-transform:uppercase;letter-spacing:.04em}
+.m-chip-more:hover{color:var(--text-primary)}
+.m-chip-overflow{display:none}
 
 /* KANBAN */
 .columns{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:1.5rem}
